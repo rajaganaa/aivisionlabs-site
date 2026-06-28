@@ -1,615 +1,729 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 
-// ─── Neural network node background for hero ───────────────────────────────
-function NeuralCanvas() {
-  const canvasRef = useRef(null)
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    let animId
-    const nodes = []
-    const NODE_COUNT = 42
-
-    function resize() {
-      canvas.width = canvas.offsetWidth
-      canvas.height = canvas.offsetHeight
-    }
-    resize()
-    window.addEventListener('resize', resize)
-
-    for (let i = 0; i < NODE_COUNT; i++) {
-      nodes.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.18,
-        vy: (Math.random() - 0.5) * 0.18,
-        r: Math.random() * 1.5 + 0.5,
-      })
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-      // Draw edges
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x
-          const dy = nodes[i].y - nodes[j].y
-          const dist = Math.sqrt(dx * dx + dy * dy)
-          if (dist < 130) {
-            ctx.beginPath()
-            ctx.strokeStyle = `rgba(245,166,35,${0.06 * (1 - dist / 130)})`
-            ctx.lineWidth = 0.5
-            ctx.moveTo(nodes[i].x, nodes[i].y)
-            ctx.lineTo(nodes[j].x, nodes[j].y)
-            ctx.stroke()
-          }
-        }
-      }
-      // Draw nodes
-      nodes.forEach(n => {
-        ctx.beginPath()
-        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(245,166,35,0.35)'
-        ctx.fill()
-        // Move
-        n.x += n.vx
-        n.y += n.vy
-        if (n.x < 0 || n.x > canvas.width) n.vx *= -1
-        if (n.y < 0 || n.y > canvas.height) n.vy *= -1
-      })
-      animId = requestAnimationFrame(draw)
-    }
-    draw()
-    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize) }
-  }, [])
-
+/* ─────────────────────────────────────────────────────────────────────────────
+   LOGO MARK — rendered in SVG so it scales perfectly
+───────────────────────────────────────────────────────────────────────────── */
+function LogoMark({ size = 28 }) {
   return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: 'absolute', inset: 0,
-        width: '100%', height: '100%',
-        opacity: 0.7, pointerEvents: 'none',
-      }}
-    />
+    <svg width={size} height={size} viewBox="0 0 28 28" fill="none" aria-hidden="true">
+      <rect width="28" height="28" rx="6"
+        fill="url(#lm-grad)" />
+      <ellipse cx="14" cy="14" rx="8.5" ry="5.5"
+        stroke="rgba(0,0,0,0.45)" strokeWidth="1.1" fill="none" />
+      <circle cx="14" cy="14" r="3" fill="rgba(0,0,0,0.38)" />
+      <circle cx="14" cy="14" r="1.3" fill="rgba(255,255,255,0.72)" />
+      <line x1="14" y1="9.5" x2="14" y2="18.5"
+        stroke="rgba(255,255,255,0.22)" strokeWidth="0.6" />
+      <line x1="9.5" y1="14" x2="18.5" y2="14"
+        stroke="rgba(255,255,255,0.22)" strokeWidth="0.6" />
+      <defs>
+        <linearGradient id="lm-grad" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#C8720A" />
+          <stop offset="100%" stopColor="#964A08" />
+        </linearGradient>
+      </defs>
+    </svg>
   )
 }
 
-// ─── Logo SVG (text-based recreation using logo's dark style) ─────────────
-function Logo({ size = 32 }) {
+function Logo({ dark = false }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      {/* Eye icon */}
-      <div style={{
-        width: size, height: size,
-        background: 'linear-gradient(135deg, #C8820A 0%, #F5A623 40%, #8B5E00 100%)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        flexShrink: 0,
-      }}>
-        <svg viewBox="0 0 24 24" width={size * 0.55} height={size * 0.55} fill="none">
-          <ellipse cx="12" cy="12" rx="9" ry="6" stroke="rgba(0,0,0,0.6)" strokeWidth="1.2"/>
-          <circle cx="12" cy="12" r="3" fill="rgba(0,0,0,0.5)"/>
-          <circle cx="12" cy="12" r="1.2" fill="rgba(255,255,255,0.8)"/>
-          {/* Compass cross */}
-          <line x1="12" y1="7" x2="12" y2="17" stroke="rgba(255,255,255,0.3)" strokeWidth="0.5"/>
-          <line x1="7" y1="12" x2="17" y2="12" stroke="rgba(255,255,255,0.3)" strokeWidth="0.5"/>
-        </svg>
-      </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+      <LogoMark size={28} />
       <span style={{
-        fontFamily: 'Syne, sans-serif',
-        fontWeight: 700,
-        fontSize: size * 0.62,
-        color: '#EDF0F5',
-        letterSpacing: '0.02em',
+        fontFamily: 'var(--f-sans)',
+        fontWeight: 600,
+        fontSize: 15,
+        letterSpacing: '-0.01em',
+        color: dark ? 'var(--d-text)' : 'var(--ink)',
         lineHeight: 1,
       }}>
-        AI<span style={{ color: '#F5A623' }}>Vision</span> Labs
+        AI<span style={{ color: 'var(--clay)' }}>Vision</span> Labs
       </span>
     </div>
   )
 }
 
-// ─── Logo (light version, for export/email) ────────────────────────────────
-function LogoLight({ size = 32 }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <div style={{
-        width: size, height: size,
-        background: 'linear-gradient(135deg, #C8820A 0%, #F5A623 40%, #8B5E00 100%)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        flexShrink: 0,
-      }}>
-        <svg viewBox="0 0 24 24" width={size * 0.55} height={size * 0.55} fill="none">
-          <ellipse cx="12" cy="12" rx="9" ry="6" stroke="rgba(0,0,0,0.6)" strokeWidth="1.2"/>
-          <circle cx="12" cy="12" r="3" fill="rgba(0,0,0,0.5)"/>
-          <circle cx="12" cy="12" r="1.2" fill="rgba(255,255,255,0.8)"/>
-          <line x1="12" y1="7" x2="12" y2="17" stroke="rgba(255,255,255,0.3)" strokeWidth="0.5"/>
-          <line x1="7" y1="12" x2="17" y2="12" stroke="rgba(255,255,255,0.3)" strokeWidth="0.5"/>
-        </svg>
-      </div>
-      <span style={{
-        fontFamily: 'Syne, sans-serif',
-        fontWeight: 700,
-        fontSize: size * 0.62,
-        color: '#111829',
-        letterSpacing: '0.02em',
-        lineHeight: 1,
-      }}>
-        AI<span style={{ color: '#C8820A' }}>Vision</span> Labs
-      </span>
-    </div>
-  )
-}
-
-// ─── Nav ────────────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────────────────
+   NAV
+───────────────────────────────────────────────────────────────────────────── */
 function Nav({ scrolled }) {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const links = ['Services', 'Work', 'About', 'Contact']
+  const links = [
+    { label: 'Services', href: '#services' },
+    { label: 'Work',     href: '#work' },
+    { label: 'About',    href: '#about' },
+    { label: 'Contact',  href: '#contact' },
+  ]
 
   return (
     <nav style={{
       position: 'fixed', top: 0, left: 0, right: 0,
       height: 'var(--nav-h)',
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '0 2.5rem',
-      background: scrolled ? 'rgba(6,9,15,0.95)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(20px)' : 'none',
+      display: 'flex', alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '0 clamp(20px, 4vw, 48px)',
+      background: scrolled ? 'rgba(247,244,239,0.92)' : 'transparent',
+      backdropFilter: scrolled ? 'blur(18px)' : 'none',
       borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
-      transition: 'all 0.3s ease',
-      zIndex: 200,
+      transition: 'background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease',
+      zIndex: 300,
     }}>
-      <a href="#top" style={{ textDecoration: 'none' }}><Logo size={28} /></a>
+      <a href="#top" style={{ textDecoration: 'none' }}>
+        <Logo />
+      </a>
 
-      {/* Desktop links */}
-      <ul className="nav-links-desktop" style={{ display: 'flex', gap: '2.5rem', listStyle: 'none' }}>
+      <ul style={{
+        display: 'flex', gap: 30, listStyle: 'none',
+        margin: 0, padding: 0,
+      }}>
         {links.map(l => (
-          <li key={l}>
-            <a href={`#${l.toLowerCase()}`} style={{
-              fontFamily: 'JetBrains Mono, monospace',
-              fontSize: '11px', letterSpacing: '0.1em',
-              color: 'var(--text-2)', textDecoration: 'none',
-              transition: 'color 0.15s',
+          <li key={l.href} style={{ display: undefined }}>
+            <a href={l.href} style={{
+              fontFamily: 'var(--f-sans)',
+              fontSize: 13.5, fontWeight: 400,
+              color: 'var(--ink2)',
+              textDecoration: 'none',
+              transition: 'color 0.15s ease',
             }}
-            onMouseEnter={e => e.target.style.color = 'var(--text)'}
-            onMouseLeave={e => e.target.style.color = 'var(--text-2)'}
-            >{l}</a>
+              onMouseEnter={e => e.target.style.color = 'var(--ink)'}
+              onMouseLeave={e => e.target.style.color = 'var(--ink2)'}
+            >{l.label}</a>
           </li>
         ))}
       </ul>
 
-      <a href="#contact" className="btn-primary" style={{ fontSize: '11px', padding: '0.6rem 1.4rem' }}>
-        Start a Project →
+      <a href="#contact" className="btn-primary" style={{ fontSize: 12.5, padding: '9px 18px' }}>
+        Start a project →
       </a>
     </nav>
   )
 }
 
-// ─── Hero ────────────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────────────────
+   HERO
+───────────────────────────────────────────────────────────────────────────── */
 function Hero() {
   return (
     <section id="top" style={{
       minHeight: '100vh',
-      padding: 'calc(var(--nav-h) + 7rem) 2.5rem 6rem',
       display: 'flex', flexDirection: 'column', justifyContent: 'center',
-      position: 'relative', overflow: 'hidden',
+      padding: 'calc(var(--nav-h) + 6rem) clamp(20px, 5vw, 72px) 6rem',
       background: 'var(--bg)',
+      position: 'relative',
+      overflow: 'hidden',
     }}>
-      <NeuralCanvas />
-
-      {/* Amber glow — top right */}
+      {/* Subtle warm radial — very gentle, OpenAI-style restraint */}
       <div style={{
-        position: 'absolute', top: '-15%', right: '-10%',
-        width: '700px', height: '700px', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(245,166,35,0.07) 0%, transparent 65%)',
+        position: 'absolute', top: '-20%', right: '-15%',
+        width: 700, height: 700,
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(168,82,42,0.055) 0%, transparent 65%)',
         pointerEvents: 'none',
       }} />
 
-      {/* Grid lines — subtle, sparse */}
-      <div style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none',
-        backgroundImage: `
-          linear-gradient(rgba(245,166,35,0.025) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(245,166,35,0.025) 1px, transparent 1px)
-        `,
-        backgroundSize: '90px 90px',
-        maskImage: 'radial-gradient(ellipse 80% 70% at 50% 50%, black 20%, transparent 100%)',
-      }} />
-
-      <div style={{ position: 'relative', zIndex: 2, maxWidth: '900px' }}>
-        <div className="section-label" style={{ marginBottom: '2.5rem', opacity: 0, animation: 'fadeUp 0.7s 0.05s forwards' }}>
-          Registered MSME · UDYAM-TN-02-0483528 · Chennai, India
+      <div style={{ maxWidth: 680, position: 'relative', zIndex: 2 }}>
+        {/* Eyebrow */}
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+          background: 'var(--clay-light)',
+          border: '1px solid var(--clay-border)',
+          padding: '5px 13px', borderRadius: 20,
+          fontFamily: 'var(--f-mono)',
+          fontSize: 10, letterSpacing: '0.14em',
+          color: 'var(--clay)', marginBottom: 36,
+          opacity: 0, animation: 'fadeUp 0.7s 0.05s cubic-bezier(0.16,1,0.3,1) forwards',
+        }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--clay)', flexShrink: 0 }} />
+          MSME REGISTERED · UDYAM-TN-02-0483528
         </div>
 
+        {/* Headline — Lora serif, calm & confident */}
         <h1 style={{
-          fontFamily: 'Syne, sans-serif',
-          fontWeight: 800,
-          fontSize: 'clamp(3.2rem, 8vw, 7.5rem)',
-          lineHeight: 0.92,
-          letterSpacing: '-0.02em',
-          color: 'var(--text)',
-          marginBottom: '0.15em',
-          opacity: 0, animation: 'fadeUp 0.8s 0.15s forwards',
+          fontFamily: 'var(--f-serif)',
+          fontWeight: 500,
+          fontSize: 'clamp(2.6rem, 7vw, 5.5rem)',
+          lineHeight: 1.06,
+          letterSpacing: '-0.025em',
+          color: 'var(--ink)',
+          marginBottom: 24,
+          opacity: 0, animation: 'fadeUp 0.8s 0.15s cubic-bezier(0.16,1,0.3,1) forwards',
         }}>
-          Enterprise AI,<br />
-          <span style={{ color: 'var(--amber)' }}>built for</span><br />
-          production.
+          AI systems built<br />
+          to <em style={{ fontStyle: 'italic', color: 'var(--clay)' }}>ship and hold</em>.
         </h1>
 
+        {/* Subhead — short, plain, Anthropic-style honest */}
         <p style={{
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: 'var(--f-sans)',
+          fontSize: 'clamp(15px, 1.8vw, 18px)',
           fontWeight: 300,
-          fontSize: 'clamp(1rem, 1.8vw, 1.2rem)',
-          color: 'var(--text-2)',
-          maxWidth: '560px',
-          lineHeight: 1.75,
-          marginTop: '2.5rem',
-          marginBottom: '3rem',
-          opacity: 0, animation: 'fadeUp 0.7s 0.35s forwards',
+          color: 'var(--ink2)',
+          lineHeight: 1.8,
+          maxWidth: 520,
+          marginBottom: 40,
+          opacity: 0, animation: 'fadeUp 0.7s 0.3s cubic-bezier(0.16,1,0.3,1) forwards',
         }}>
-          AI Vision Labs designs and ships production-grade AI systems — LLM pipelines,
-          Agentic AI, RAG architectures, and full-stack deployments — for clients who need
-          results, not prototypes.
+          AI Vision Labs builds production-grade LLM pipelines, agentic AI,
+          and RAG architectures. We work with clients who need results,
+          not prototypes.
         </p>
 
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', opacity: 0, animation: 'fadeUp 0.7s 0.5s forwards' }}>
-          <a href="#work" className="btn-primary">View Our Work →</a>
-          <a href="#contact" className="btn-secondary">Get in Touch</a>
-        </div>
-
-        {/* Stats bar */}
         <div style={{
-          display: 'flex', gap: '3rem', flexWrap: 'wrap',
-          marginTop: '5rem', paddingTop: '2.5rem',
-          borderTop: '1px solid var(--border)',
-          opacity: 0, animation: 'fadeUp 0.7s 0.65s forwards',
+          display: 'flex', gap: 12, flexWrap: 'wrap',
+          opacity: 0, animation: 'fadeUp 0.7s 0.45s cubic-bezier(0.16,1,0.3,1) forwards',
         }}>
-          {[
-            { n: '1', label: 'Live Production Product' },
-            { n: '1', label: 'Patent Filed' },
-            { n: '3', label: 'HuggingFace Models' },
-            { n: '2+', label: 'Years Building AI' },
-          ].map(s => (
-            <div key={s.label}>
-              <div style={{
-                fontFamily: 'Syne, sans-serif', fontWeight: 700,
-                fontSize: '2rem', color: 'var(--amber)', lineHeight: 1,
-              }}>{s.n}</div>
-              <div style={{
-                fontFamily: 'JetBrains Mono, monospace',
-                fontSize: '10px', letterSpacing: '0.1em',
-                color: 'var(--text-3)', marginTop: '0.3rem',
-              }}>{s.label}</div>
-            </div>
-          ))}
+          <a href="#work" className="btn-primary">View our work →</a>
+          <a href="#contact" className="btn-secondary">Get in touch</a>
         </div>
       </div>
     </section>
   )
 }
 
-// ─── Services ────────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────────────────
+   STATS BAR
+───────────────────────────────────────────────────────────────────────────── */
+const STATS = [
+  { num: '1',      label: 'Live production\nclient' },
+  { num: '1',      label: 'Patent filed\nApr 2026' },
+  { num: '5-stage',label: 'Reasoning\npipeline' },
+  { num: '2+',     label: 'Years independent\nAI engineering' },
+]
+
+function StatsBar() {
+  return (
+    <div style={{
+      background: 'var(--ink)',
+      padding: '0',
+    }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        maxWidth: 900, margin: '0 auto',
+      }}>
+        {STATS.map((s, i) => (
+          <div key={i} style={{
+            padding: '32px 24px',
+            borderRight: i < STATS.length - 1 ? '1px solid rgba(231,229,224,0.07)' : 'none',
+            textAlign: 'center',
+          }}>
+            <div style={{
+              fontFamily: 'var(--f-serif)',
+              fontWeight: 400,
+              fontSize: 'clamp(1.6rem, 3.5vw, 2.6rem)',
+              letterSpacing: '-0.025em',
+              color: '#fff', lineHeight: 1,
+              marginBottom: 8,
+            }}>
+              {s.num.includes('stage') ? (
+                <><span style={{ color: 'var(--clay-mid)' }}>5</span>‑stage</>
+              ) : (
+                <><span style={{ color: 'var(--clay-mid)' }}>{s.num}</span></>
+              )}
+            </div>
+            <div style={{
+              fontFamily: 'var(--f-mono)',
+              fontSize: 10, letterSpacing: '0.09em',
+              color: 'rgba(231,229,224,0.38)',
+              lineHeight: 1.55,
+              whiteSpace: 'pre-line',
+            }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SERVICES — BENTO GRID
+───────────────────────────────────────────────────────────────────────────── */
 const SERVICES = [
   {
-    icon: '⬡',
-    title: 'AI/ML Development',
-    desc: 'Custom AI applications built for specific business problems.',
-    items: ['Custom ML solutions for classification, prediction, anomaly detection', 'Computer vision pipelines — image/video analysis, object detection', 'NLP systems — sentiment, extraction, document intelligence', 'End-to-end delivery from data pipeline to production API'],
-  },
-  {
+    id: 'llm',
+    span: 'col2',          /* spans 2 columns */
     icon: '◈',
     title: 'LLM & Generative AI',
-    desc: 'Language models that work reliably at production scale.',
-    items: ['RAG pipelines with FAISS, Qdrant, and vector database orchestration', 'LLM fine-tuning with QLoRA/PEFT for domain adaptation', 'Intelligent chatbots, AI assistants, document Q&A systems', 'Multimodal AI — text + image + document reasoning'],
+    desc: 'Language models that work reliably at production scale — not just in the notebook.',
+    bullets: [
+      'RAG pipelines with FAISS and Qdrant vector orchestration',
+      'LLM fine-tuning with QLoRA/PEFT for domain adaptation',
+      'Intelligent chatbots, AI assistants, document Q&A',
+      'Multimodal AI — text, image, and document reasoning',
+    ],
   },
   {
+    id: 'agentic',
+    span: 'row2',          /* spans 2 rows */
     icon: '◎',
     title: 'Agentic AI',
-    desc: 'Autonomous systems that plan, act, and iterate without hand-holding.',
-    items: ['Multi-agent orchestration with LangChain and custom frameworks', 'Spec-driven agents with tool-calling and memory', 'Antahkarana — our proprietary 5-stage reasoning architecture', 'Validated on 2,500+ multimodal samples, patent filed'],
+    desc: 'Autonomous systems that plan, act, and iterate.',
+    bullets: [
+      'Multi-agent orchestration with LangChain',
+      'Spec-driven agents with tool-calling and memory',
+      'Antahkarana — our 5-stage reasoning architecture',
+      'Validated on 2,500+ multimodal samples',
+    ],
+    extra: {
+      label: 'PATENT FILED',
+      body: 'App No. 202641043947 · IEEE Paper Submitted',
+    },
   },
   {
+    id: 'aiml',
+    span: 'normal',
+    icon: '⬡',
+    title: 'AI/ML Development',
+    desc: 'Custom AI for classification, prediction, CV, and NLP — end-to-end.',
+    bullets: [
+      'Computer vision pipelines',
+      'NLP & document intelligence',
+      'End-to-end delivery to production API',
+    ],
+  },
+  {
+    id: 'aaas',
+    span: 'normal',
     icon: '▣',
     title: 'Agent-as-a-Service',
     desc: 'Domain-specific agents deployed as managed services.',
-    items: ['Customer support agents with RAG + escalation logic', 'Healthcare intake, report analysis, triage agents', 'HR knowledge base and onboarding automation', 'Research synthesis agents for document-heavy workflows'],
+    bullets: [
+      'Healthcare intake & triage agents',
+      'Customer support with RAG + escalation',
+      'HR knowledge base automation',
+    ],
   },
   {
+    id: 'deploy',
+    span: 'col2',
     icon: '◆',
     title: 'AI Deployment',
-    desc: 'We don\'t stop at the model. We ship it.',
-    items: ['Azure Container Apps, AWS SageMaker, GCP Vertex AI', 'FastAPI backends, Docker containerization, GitHub Actions CI/CD', 'Production monitoring, confidence scoring, hallucination checks', 'DPDP Act 2023 and enterprise compliance-ready architecture'],
+    desc: "We don't stop at the model — we ship it, monitor it, and keep it honest.",
+    tags: ['Azure Container Apps', 'AWS SageMaker', 'GCP Vertex AI', 'FastAPI', 'Docker', 'GitHub Actions CI/CD', 'Hallucination checks', 'DPDP Act 2023'],
   },
 ]
 
+function BentoCard({ svc }) {
+  const isWide = svc.span === 'col2'
+  const isTall = svc.span === 'row2'
+
+  return (
+    <div className="card" style={{
+      gridColumn: isWide ? 'span 2' : 'span 1',
+      gridRow: isTall ? 'span 2' : 'span 1',
+      padding: 26,
+      position: 'relative',
+      overflow: 'hidden',
+      cursor: 'default',
+    }}>
+      {/* Top accent line for featured cards */}
+      {(isWide || isTall) && (
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0,
+          height: 2,
+          background: 'linear-gradient(90deg, var(--clay) 0%, transparent 80%)',
+        }} />
+      )}
+
+      <div style={{
+        width: 36, height: 36,
+        background: 'var(--clay-light)',
+        borderRadius: 8,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 15, color: 'var(--clay)',
+        marginBottom: 14,
+      }}>{svc.icon}</div>
+
+      <h3 style={{
+        fontFamily: 'var(--f-sans)', fontWeight: 600,
+        fontSize: 14.5, color: 'var(--ink)',
+        marginBottom: 6, letterSpacing: '-0.01em',
+      }}>{svc.title}</h3>
+
+      <p style={{
+        fontFamily: 'var(--f-sans)', fontSize: 13, fontWeight: 300,
+        color: 'var(--ink2)', lineHeight: 1.65, marginBottom: svc.bullets ? 14 : 0,
+      }}>{svc.desc}</p>
+
+      {svc.bullets && (
+        <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 5 }}>
+          {svc.bullets.map((b, i) => (
+            <li key={i} style={{
+              fontFamily: 'var(--f-sans)', fontSize: 12.5, fontWeight: 300,
+              color: 'var(--ink3)', lineHeight: 1.55,
+              paddingLeft: 13, position: 'relative',
+            }}>
+              <span style={{ position: 'absolute', left: 0, color: 'var(--clay)', fontSize: 12 }}>›</span>
+              {b}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {svc.extra && (
+        <div style={{
+          marginTop: 18, padding: '11px 14px',
+          background: 'var(--clay-light)',
+          border: '1px solid var(--clay-border)',
+          borderRadius: 8,
+        }}>
+          <div style={{
+            fontFamily: 'var(--f-mono)', fontSize: 9.5,
+            letterSpacing: '0.13em', color: 'var(--clay)',
+            marginBottom: 3,
+          }}>{svc.extra.label}</div>
+          <div style={{
+            fontFamily: 'var(--f-sans)', fontSize: 12, fontWeight: 300,
+            color: 'var(--ink2)', lineHeight: 1.5,
+          }}>{svc.extra.body}</div>
+        </div>
+      )}
+
+      {svc.tags && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 14 }}>
+          {svc.tags.map(t => <span key={t} className="tag">{t}</span>)}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function Services() {
   return (
-    <section id="services" style={{ padding: '8rem 2.5rem', background: 'var(--bg2)' }}>
-      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        <div style={{ marginBottom: '4rem' }}>
-          <div className="section-label" style={{ marginBottom: '1.5rem' }}>What We Build</div>
-          <h2 style={{
-            fontFamily: 'Syne, sans-serif', fontWeight: 700,
-            fontSize: 'clamp(2rem, 4vw, 3.2rem)',
-            lineHeight: 1.1, color: 'var(--text)',
-            maxWidth: '520px',
-          }}>
-            Five capability areas.<br />One delivery standard.
-          </h2>
-        </div>
+    <section id="services" style={{ padding: '80px clamp(20px, 5vw, 72px)', background: 'var(--bg2)' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+        <div className="section-label">What we build</div>
+        <h2 className="section-h2">Five capabilities,<br /><em>one delivery standard</em>.</h2>
+        <p className="section-sub">
+          We take on AI work where the bar is real-world outcomes — not model accuracy benchmarks.
+        </p>
 
+        {/* 3-column bento */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '1px',
-          background: 'var(--border)',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: 10,
         }}>
-          {SERVICES.map((s, i) => (
-            <div key={i} className="card-hover" style={{
-              background: 'var(--bg2)',
-              padding: '2.5rem 2rem',
-              borderBottom: i < SERVICES.length - 1 ? '1px solid var(--border)' : 'none',
-              cursor: 'default',
-            }}>
-              <div style={{
-                fontFamily: 'Syne, sans-serif',
-                fontSize: '1.5rem', color: 'var(--amber)',
-                marginBottom: '1rem',
-              }}>{s.icon}</div>
-              <h3 style={{
-                fontFamily: 'Syne, sans-serif', fontWeight: 700,
-                fontSize: '1.1rem', color: 'var(--text)',
-                marginBottom: '0.5rem',
-              }}>{s.title}</h3>
-              <p style={{
-                fontFamily: 'Inter, sans-serif', fontSize: '13px',
-                color: 'var(--text-2)', marginBottom: '1.2rem', lineHeight: 1.6,
-              }}>{s.desc}</p>
-              <ul style={{ listStyle: 'none', padding: 0 }}>
-                {s.items.map((item, j) => (
-                  <li key={j} style={{
-                    fontFamily: 'Inter, sans-serif', fontSize: '12.5px',
-                    color: 'var(--text-3)', marginBottom: '0.4rem',
-                    paddingLeft: '1rem', position: 'relative',
-                    lineHeight: 1.5,
-                  }}>
-                    <span style={{
-                      position: 'absolute', left: 0,
-                      color: 'var(--amber)', fontSize: '10px', top: '3px',
-                    }}>›</span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {SERVICES.map(svc => <BentoCard key={svc.id} svc={svc} />)}
         </div>
       </div>
     </section>
   )
 }
 
-// ─── Featured Work ────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────────────────
+   FEATURED WORK
+───────────────────────────────────────────────────────────────────────────── */
 function Work() {
   return (
-    <section id="work" style={{ padding: '8rem 2.5rem', background: 'var(--bg)' }}>
-      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        <div style={{ marginBottom: '4rem' }}>
-          <div className="section-label" style={{ marginBottom: '1.5rem' }}>Featured Work</div>
-          <h2 style={{
-            fontFamily: 'Syne, sans-serif', fontWeight: 700,
-            fontSize: 'clamp(2rem, 4vw, 3.2rem)',
-            lineHeight: 1.1, color: 'var(--text)',
-          }}>
-            Shipped, not demoed.
-          </h2>
-          <p style={{
-            fontFamily: 'Inter, sans-serif', fontSize: '14px',
-            color: 'var(--text-2)', maxWidth: '500px',
-            lineHeight: 1.75, marginTop: '1rem',
-          }}>
-            Both of these are live in the real world — one serving real patients, one
-            filed as a patent and submitted to IEEE.
-          </p>
-        </div>
+    <section id="work" style={{ padding: '80px clamp(20px, 5vw, 72px)', background: 'var(--bg)' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+        <div className="section-label">Featured work</div>
+        <h2 className="section-h2">Shipped, not <em>demoed</em>.</h2>
+        <p className="section-sub">
+          One live product serving real patients. One patent-filed reasoning framework
+          powering it in production.
+        </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.5rem' }}>
-          {/* Flagship: Anbu Health AI */}
-          <div style={{
-            background: 'var(--bg2)',
-            border: '1px solid var(--border)',
-            padding: '2.5rem',
-            position: 'relative',
-            overflow: 'hidden',
-          }}>
-            {/* Amber accent line */}
-            <div style={{
-              position: 'absolute', top: 0, left: 0, right: 0,
-              height: '2px',
-              background: 'linear-gradient(90deg, var(--amber) 0%, transparent 100%)',
-            }} />
-
-            <div style={{
-              fontFamily: 'JetBrains Mono, monospace',
-              fontSize: '10px', letterSpacing: '0.18em',
-              color: 'var(--amber)', marginBottom: '1.5rem',
-              display: 'flex', alignItems: 'center', gap: '0.75rem',
-            }}>
-              <span style={{
-                background: 'rgba(245,166,35,0.15)',
-                border: '1px solid rgba(245,166,35,0.3)',
-                padding: '2px 8px', fontSize: '9px',
-              }}>LIVE IN PRODUCTION</span>
-              FLAGSHIP PROJECT
+        {/* Anbu Health AI — case study card */}
+        <div className="card" style={{
+          padding: 'clamp(24px, 4vw, 40px)',
+          marginBottom: 12,
+          display: 'grid',
+          gridTemplateColumns: '1.15fr 1fr',
+          gap: 40,
+          alignItems: 'start',
+        }}>
+          <div>
+            <div className="live-badge">
+              <span className="live-dot" />
+              LIVE IN PRODUCTION
             </div>
-
             <h3 style={{
-              fontFamily: 'Syne, sans-serif', fontWeight: 700,
-              fontSize: '1.6rem', color: 'var(--text)',
-              marginBottom: '1rem', lineHeight: 1.1,
+              fontFamily: 'var(--f-serif)', fontWeight: 500,
+              fontSize: 'clamp(1.4rem, 3vw, 2rem)',
+              lineHeight: 1.15, letterSpacing: '-0.02em',
+              color: 'var(--ink)', marginBottom: 14,
             }}>Anbu Health AI</h3>
-
             <p style={{
-              fontFamily: 'Inter, sans-serif', fontSize: '13.5px',
-              color: 'var(--text-2)', lineHeight: 1.75, marginBottom: '1.5rem',
+              fontFamily: 'var(--f-sans)', fontSize: 13.5, fontWeight: 300,
+              color: 'var(--ink2)', lineHeight: 1.8, marginBottom: 20,
             }}>
-              A bilingual (Tamil/English) medical AI assistant that analyzes lab reports,
-              diagnostic scans, and medicine photos for real patients — deployed to a paying
-              client at anbuclinic.me.
+              A bilingual (Tamil/English) medical AI assistant that analyses
+              lab reports, diagnostic scans, and medicine photos — shipped to a
+              paying client at anbuclinic.me with Firebase OTP auth and
+              DPDP Act 2023-aligned data handling.
             </p>
-
-            <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{
-                fontFamily: 'JetBrains Mono, monospace',
-                fontSize: '10px', letterSpacing: '0.12em',
-                color: 'var(--text-3)', marginBottom: '0.6rem',
-              }}>ARCHITECTURE</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                {['React', 'FastAPI', 'Azure Container Apps', 'Groq + GPT-4o Vision', 'Qdrant RAG', 'Firebase OTP', 'DPDP Act 2023'].map(t => (
-                  <span key={t} style={{
-                    fontFamily: 'JetBrains Mono, monospace',
-                    fontSize: '10px', letterSpacing: '0.05em',
-                    color: 'var(--text-3)',
-                    background: 'var(--bg3)',
-                    border: '1px solid var(--border)',
-                    padding: '2px 8px',
-                  }}>{t}</span>
-                ))}
-              </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 22 }}>
+              {['React', 'FastAPI', 'Azure Container Apps', 'Groq + GPT-4o Vision', 'Qdrant RAG'].map(t => (
+                <span key={t} className="tag">{t}</span>
+              ))}
             </div>
-
-            <div style={{ marginBottom: '2rem' }}>
-              <div style={{
-                fontFamily: 'JetBrains Mono, monospace',
-                fontSize: '10px', letterSpacing: '0.12em',
-                color: 'var(--text-3)', marginBottom: '0.6rem',
-              }}>WHAT WE BUILT</div>
-              <ul style={{ listStyle: 'none', padding: 0 }}>
-                {[
-                  '5-stage reasoning pipeline (routing → RAG → LLM → confidence → hallucination check)',
-                  'Multimodal input — text, scan images, medicine photos',
-                  'Full-stack: frontend, backend, AI pipeline, cloud infra',
-                ].map((item, i) => (
-                  <li key={i} style={{
-                    fontFamily: 'Inter, sans-serif', fontSize: '12.5px',
-                    color: 'var(--text-2)', marginBottom: '0.5rem',
-                    paddingLeft: '1rem', position: 'relative', lineHeight: 1.5,
-                  }}>
-                    <span style={{ position: 'absolute', left: 0, color: 'var(--amber)', fontSize: '10px', top: '2px' }}>›</span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <a href="https://anbuclinic.me" target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-              View Live Product →
+            <a
+              href="https://anbuclinic.me"
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                fontFamily: 'var(--f-mono)', fontSize: 12,
+                letterSpacing: '0.06em', color: 'var(--clay)',
+                textDecoration: 'none', fontWeight: 500,
+                display: 'inline-flex', alignItems: 'center', gap: 4,
+                transition: 'opacity 0.15s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
+              onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+            >
+              anbuclinic.me →
             </a>
           </div>
 
-          {/* Antahkarana Framework */}
+          {/* Stat callouts */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {[
+              { n: '5', label: 'Stage reasoning pipeline', sub: 'routing → RAG → LLM → scoring → check' },
+              { n: '2',  label: 'Languages supported', sub: 'Tamil & English, bilingual throughout' },
+              { n: '∞',  label: 'Full-stack delivery', sub: 'Frontend, backend, AI pipeline, cloud infra' },
+            ].map((s, i) => (
+              <div key={i} style={{
+                background: 'var(--bg2)',
+                border: '1px solid var(--border)',
+                borderRadius: 10, padding: '16px 20px',
+                display: 'flex', gap: 14, alignItems: 'center',
+              }}>
+                <div style={{
+                  fontFamily: 'var(--f-serif)', fontWeight: 400,
+                  fontSize: s.n === '∞' ? 26 : 30,
+                  color: 'var(--ink)', lineHeight: 1, flexShrink: 0,
+                  letterSpacing: '-0.02em', minWidth: 36,
+                }}>{s.n}</div>
+                <div>
+                  <div style={{
+                    fontFamily: 'var(--f-sans)', fontWeight: 500,
+                    fontSize: 12.5, color: 'var(--ink)', marginBottom: 2,
+                  }}>{s.label}</div>
+                  <div style={{
+                    fontFamily: 'var(--f-sans)', fontSize: 11.5,
+                    fontWeight: 300, color: 'var(--ink3)', lineHeight: 1.5,
+                  }}>{s.sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Antahkarana — dark card */}
+        <div style={{
+          background: 'var(--ink)',
+          borderRadius: 14, padding: 'clamp(24px, 4vw, 40px)',
+          display: 'grid', gridTemplateColumns: '1fr 1fr',
+          gap: 40, alignItems: 'start',
+        }}>
+          <div>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 7,
+              background: 'rgba(196,105,62,0.16)',
+              border: '1px solid rgba(196,105,62,0.3)',
+              padding: '4px 11px', borderRadius: 20,
+              fontFamily: 'var(--f-mono)', fontSize: 10,
+              letterSpacing: '0.12em', color: 'var(--clay-mid)',
+              marginBottom: 16,
+            }}>
+              PATENT FILED · IEEE SUBMITTED
+            </div>
+            <h3 style={{
+              fontFamily: 'var(--f-serif)', fontStyle: 'italic',
+              fontWeight: 400, fontSize: 'clamp(1.3rem, 2.5vw, 1.85rem)',
+              lineHeight: 1.2, letterSpacing: '-0.02em',
+              color: 'var(--d-text)', marginBottom: 14,
+            }}>Antahkarana<br />Reasoning Framework</h3>
+            <p style={{
+              fontFamily: 'var(--f-sans)', fontSize: 13.5, fontWeight: 300,
+              color: 'var(--d-text2)', lineHeight: 1.8, marginBottom: 18,
+            }}>
+              A cognitively-inspired 5-stage architecture for LLMs and VLMs,
+              built on Vedantic cognitive theory. Validated on 2,500+ multimodal
+              samples. Powers Anbu Health AI in production.
+            </p>
+            <div style={{
+              fontFamily: 'var(--f-mono)', fontSize: 10,
+              letterSpacing: '0.08em', color: 'var(--d-text3)',
+              lineHeight: 1.8,
+            }}>
+              APP NO. 202641043947<br />
+              APRIL 2026 · GOOGLE SCHOLAR INDEXED
+            </div>
+          </div>
+
+          {/* 5 stages */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+            {[
+              { name: 'Manas',    role: 'Perception & sensory input' },
+              { name: 'Chitta',   role: 'Memory & retrieval (RAG)' },
+              { name: 'Buddhi',   role: 'Discrimination & reasoning' },
+              { name: 'Ahamkara', role: 'Integration & response synthesis' },
+              { name: 'Sakshi',   role: 'Confidence & hallucination check' },
+            ].map((s, i) => (
+              <div key={i} style={{
+                display: 'flex', gap: 14, alignItems: 'center',
+                padding: '11px 14px',
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid var(--d-border)',
+                borderRadius: 8,
+              }}>
+                <span style={{
+                  fontFamily: 'var(--f-mono)', fontSize: 11,
+                  color: 'var(--clay-mid)', fontWeight: 500,
+                  minWidth: 68, flexShrink: 0,
+                }}>{s.name}</span>
+                <span style={{
+                  fontFamily: 'var(--f-sans)', fontSize: 12,
+                  fontWeight: 300, color: 'var(--d-text2)', lineHeight: 1.4,
+                }}>{s.role}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DEV / TECH STACK — dark section (Vercel influence, contained here only)
+───────────────────────────────────────────────────────────────────────────── */
+function DevSection() {
+  const stackItems = [
+    'Azure Container Apps', 'AWS SageMaker', 'GCP Vertex AI',
+    'FastAPI', 'Docker', 'GitHub Actions',
+    'Groq + GPT-4o Vision', 'Qdrant', 'FAISS',
+    'LangChain', 'HuggingFace', 'PyTorch',
+  ]
+
+  return (
+    <section className="dark-section" style={{
+      background: 'var(--bg-dark)',
+      padding: '80px clamp(20px, 5vw, 72px)',
+    }}>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr',
+          gap: 56, alignItems: 'start',
+        }}>
+          {/* Left: text + stack grid */}
+          <div>
+            <div style={{
+              fontFamily: 'var(--f-mono)', fontSize: 10.5,
+              letterSpacing: '0.2em', color: 'var(--clay-mid)',
+              textTransform: 'uppercase', marginBottom: 18,
+              display: 'flex', alignItems: 'center', gap: 10,
+            }}>
+              <span style={{ display: 'block', width: 22, height: 1, background: 'var(--clay-mid)' }} />
+              Infrastructure
+            </div>
+            <h2 style={{
+              fontFamily: 'var(--f-serif)', fontWeight: 400,
+              fontSize: 'clamp(1.6rem, 3vw, 2.4rem)',
+              lineHeight: 1.12, letterSpacing: '-0.025em',
+              color: 'var(--d-text)', marginBottom: 14,
+            }}>
+              Reliable,<br /><em style={{ fontStyle: 'italic', color: 'var(--clay-mid)' }}>cloud-native by default</em>.
+            </h2>
+            <p style={{
+              fontFamily: 'var(--f-sans)', fontSize: 13.5,
+              fontWeight: 300, color: 'var(--d-text2)',
+              lineHeight: 1.8, marginBottom: 32, maxWidth: 380,
+            }}>
+              Every system is designed for real-world reliability — proper cloud infra,
+              CI/CD pipelines, containerised deployments, and observability from day one.
+            </p>
+
+            {/* Stack grid */}
+            <div style={{
+              display: 'grid', gridTemplateColumns: '1fr 1fr',
+              gap: 7,
+            }}>
+              {stackItems.map(name => (
+                <div key={name} style={{
+                  display: 'flex', alignItems: 'center', gap: 9,
+                  background: 'var(--bg-dark2)',
+                  border: '1px solid var(--d-border)',
+                  borderRadius: 7, padding: '9px 12px',
+                }}>
+                  <span style={{
+                    width: 6, height: 6, borderRadius: '50%',
+                    background: 'var(--clay-mid)', flexShrink: 0,
+                  }} />
+                  <span style={{
+                    fontFamily: 'var(--f-mono)', fontSize: 11,
+                    color: 'var(--d-text2)', fontWeight: 400,
+                  }}>{name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right: terminal code block */}
           <div style={{
-            background: 'var(--bg2)',
-            border: '1px solid var(--border)',
-            padding: '2.5rem',
-            position: 'relative',
+            background: 'var(--bg-dark2)',
+            border: '1px solid var(--d-border2)',
+            borderRadius: 12,
             overflow: 'hidden',
           }}>
+            {/* Terminal chrome */}
             <div style={{
-              position: 'absolute', top: 0, left: 0, right: 0,
-              height: '2px',
-              background: 'linear-gradient(90deg, rgba(245,166,35,0.4) 0%, transparent 100%)',
-            }} />
-
-            <div style={{
-              fontFamily: 'JetBrains Mono, monospace',
-              fontSize: '10px', letterSpacing: '0.18em',
-              color: 'var(--text-3)', marginBottom: '1.5rem',
-              display: 'flex', alignItems: 'center', gap: '0.75rem',
+              display: 'flex', alignItems: 'center', gap: 7,
+              padding: '11px 16px',
+              borderBottom: '1px solid var(--d-border)',
             }}>
+              {['#E25655','#E3AA40','#57A65A'].map(c => (
+                <span key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c, flexShrink: 0 }} />
+              ))}
               <span style={{
-                background: 'rgba(139,149,168,0.10)',
-                border: '1px solid rgba(139,149,168,0.2)',
-                padding: '2px 8px', fontSize: '9px', color: 'var(--text-2)',
-              }}>PATENT FILED · IEEE SUBMITTED</span>
-              R&amp;D / FRAMEWORK
+                fontFamily: 'var(--f-mono)', fontSize: 10,
+                color: 'var(--d-text3)', marginLeft: 8,
+              }}>antahkarana/pipeline.py</span>
             </div>
-
-            <h3 style={{
-              fontFamily: 'Syne, sans-serif', fontWeight: 700,
-              fontSize: '1.6rem', color: 'var(--text)',
-              marginBottom: '1rem', lineHeight: 1.1,
-            }}>Antahkarana<br />Reasoning Framework</h3>
-
-            <p style={{
-              fontFamily: 'Inter, sans-serif', fontSize: '13.5px',
-              color: 'var(--text-2)', lineHeight: 1.75, marginBottom: '1.5rem',
+            {/* Code */}
+            <pre style={{
+              fontFamily: 'var(--f-mono)', fontSize: 11.5,
+              lineHeight: 1.85, color: 'var(--d-text2)',
+              padding: '20px 22px', margin: 0,
+              overflowX: 'auto',
             }}>
-              A cognitively-inspired 5-stage reasoning architecture for LLMs and VLMs —
-              built on Vedantic cognitive theory, validated on 2,500+ multimodal samples,
-              and powering Anbu Health AI in production.
-            </p>
-
-            <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{
-                fontFamily: 'JetBrains Mono, monospace',
-                fontSize: '10px', letterSpacing: '0.12em',
-                color: 'var(--text-3)', marginBottom: '0.8rem',
-              }}>THE 5 STAGES</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {[
-                  { name: 'Manas', role: 'Perception & Sensory Input' },
-                  { name: 'Chitta', role: 'Memory & Retrieval (RAG)' },
-                  { name: 'Buddhi', role: 'Discrimination & Reasoning' },
-                  { name: 'Ahamkara', role: 'Integration & Response Synthesis' },
-                  { name: 'Sakshi', role: 'Confidence & Hallucination Check' },
-                ].map((stage, i) => (
-                  <div key={i} style={{
-                    display: 'flex', gap: '0.75rem', alignItems: 'baseline',
-                  }}>
-                    <span style={{
-                      fontFamily: 'JetBrains Mono, monospace',
-                      fontSize: '10px', color: 'var(--amber)',
-                      minWidth: '70px',
-                    }}>{stage.name}</span>
-                    <span style={{
-                      fontFamily: 'Inter, sans-serif',
-                      fontSize: '12px', color: 'var(--text-3)',
-                    }}>{stage.role}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '2rem' }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                {['Transformers', 'BLIP-3', 'Qwen', 'LangChain', 'FAISS', 'Qdrant'].map(t => (
-                  <span key={t} style={{
-                    fontFamily: 'JetBrains Mono, monospace',
-                    fontSize: '10px',
-                    color: 'var(--text-3)',
-                    background: 'var(--bg3)',
-                    border: '1px solid var(--border)',
-                    padding: '2px 8px',
-                  }}>{t}</span>
-                ))}
-              </div>
-            </div>
-
-            <div style={{
-              background: 'var(--bg3)',
-              border: '1px solid var(--border)',
-              padding: '1rem',
-              fontFamily: 'Inter, sans-serif',
-              fontSize: '12.5px',
-              color: 'var(--text-2)',
-              lineHeight: 1.6,
-            }}>
-              <span style={{ color: 'var(--amber)', fontFamily: 'JetBrains Mono, monospace', fontSize: '10px', letterSpacing: '0.1em' }}>
-                APP NO. 202641043947
-              </span>
-              <br />Indian Patent Filed · Apr 2026 · IEEE Paper Google Scholar Indexed
-            </div>
+{[
+  { t: 'c', v: '# 5-stage Antahkarana pipeline' },
+  { t: 'k', v: 'from', a: ' antahkarana ' },
+  { t: 'k', v: 'import', a: ' Pipeline' },
+  null,
+  { t: 'p', v: 'pipe = Pipeline(' },
+  { t: 'i', v: '  manas',    s: '=PerceptionStage(),' },
+  { t: 'i', v: '  chitta',   s: '=RAGStage(qdrant),' },
+  { t: 'i', v: '  buddhi',   s: '=ReasoningStage(),' },
+  { t: 'i', v: '  ahamkara', s: '=SynthesisStage(),' },
+  { t: 'i', v: '  sakshi',   s: '=HallucinationCheck(),' },
+  { t: 'p', v: ')' },
+  null,
+  { t: 'c', v: '# Deployed · Azure Container Apps' },
+  { t: 'c', v: '# Live at anbuclinic.me' },
+].map((line, idx) => {
+  if (!line) return <span key={idx}>{'\n'}</span>
+  if (line.t === 'c') return (
+    <span key={idx} style={{ color: 'rgba(231,229,224,0.25)' }}>{line.v + '\n'}</span>
+  )
+  if (line.t === 'k') return (
+    <span key={idx}>
+      <span style={{ color: '#C392E0' }}>{line.v}</span>
+      <span>{line.a + '\n'}</span>
+    </span>
+  )
+  if (line.t === 'i') return (
+    <span key={idx}>
+      <span style={{ color: '#7EC8A0' }}>{line.v}</span>
+      <span style={{ color: 'rgba(231,229,224,0.35)' }}>{line.s + '\n'}</span>
+    </span>
+  )
+  return <span key={idx}>{line.v + '\n'}</span>
+})}
+            </pre>
           </div>
         </div>
       </div>
@@ -617,144 +731,117 @@ function Work() {
   )
 }
 
-// ─── About ───────────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────────────────
+   ABOUT
+───────────────────────────────────────────────────────────────────────────── */
 function About() {
   return (
-    <section id="about" style={{ padding: '8rem 2.5rem', background: 'var(--bg2)' }}>
-      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        <div style={{ marginBottom: '4rem' }}>
-          <div className="section-label" style={{ marginBottom: '1.5rem' }}>About AI Vision Labs</div>
-          <h2 style={{
-            fontFamily: 'Syne, sans-serif', fontWeight: 700,
-            fontSize: 'clamp(2rem, 4vw, 3.2rem)',
-            lineHeight: 1.1, color: 'var(--text)',
-            maxWidth: '600px',
-          }}>
-            An independent AI lab<br />built on shipped work.
-          </h2>
-        </div>
+    <section id="about" style={{ padding: '80px clamp(20px, 5vw, 72px)', background: 'var(--bg2)' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+        <div className="section-label">About</div>
+        <h2 className="section-h2">Built on <em>shipped work</em>.</h2>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '4rem' }}>
-          {/* Story */}
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1.4fr 1fr',
+          gap: 56, alignItems: 'start',
+        }}>
           <div>
-            <p style={{
-              fontFamily: 'Inter, sans-serif', fontSize: '14.5px',
-              color: 'var(--text-2)', lineHeight: 1.85, marginBottom: '1.5rem',
-            }}>
-              AI Vision Labs was founded to close the gap between AI research and production
-              deployment. Too many organisations get impressive demos that never make it to real users.
-              We build things that ship — with proper infra, compliance-ready architecture, and
-              hallucination controls built in from day one.
-            </p>
-            <p style={{
-              fontFamily: 'Inter, sans-serif', fontSize: '14.5px',
-              color: 'var(--text-2)', lineHeight: 1.85, marginBottom: '1.5rem',
-            }}>
-              Founded in Chennai, we're available for select engagements globally — AI/ML
-              development contracts, LLM integration projects, and agentic system builds.
-              We take on work where the bar is real-world outcomes, not just model accuracy.
-            </p>
-            <p style={{
-              fontFamily: 'Inter, sans-serif', fontSize: '14.5px',
-              color: 'var(--text-2)', lineHeight: 1.85,
-            }}>
-              Our reasoning framework, Antahkarana, is an original R&amp;D contribution —
-              patent filed, IEEE paper submitted — available as the cognitive backbone for
-              complex reasoning tasks requiring multi-stage validation.
-            </p>
+            {[
+              `AI Vision Labs was founded to close the gap between AI research and production
+deployment. Too many organisations receive impressive demos that never reach real
+users. We build things that ship — with proper infrastructure, compliance-ready
+architecture, and hallucination controls built in from day one.`,
+              `Founded in Chennai and registered as an MSME, we're available for select
+engagements globally — AI/ML development contracts, LLM integration projects, and
+agentic system builds. We take on work where the bar is real-world outcomes.`,
+              `Our reasoning framework, Antahkarana, is an original R&D contribution — patent
+filed, IEEE paper submitted — and serves as the cognitive backbone for complex,
+multi-stage reasoning tasks requiring rigorous validation.`,
+            ].map((para, i) => (
+              <p key={i} style={{
+                fontFamily: 'var(--f-sans)', fontSize: 14.5,
+                fontWeight: 300, color: 'var(--ink2)',
+                lineHeight: 1.85, marginBottom: 20,
+              }}>{para.trim()}</p>
+            ))}
           </div>
 
-          {/* Right side: Team + Registration */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            {/* Registration */}
-            <div style={{
-              background: 'var(--bg3)',
-              border: '1px solid var(--border)',
-              padding: '1.5rem',
-            }}>
-              <div className="section-label" style={{ marginBottom: '1rem' }}>Company Registration</div>
-              <div style={{
-                fontFamily: 'Syne, sans-serif', fontWeight: 600,
-                fontSize: '1rem', color: 'var(--text)', marginBottom: '0.4rem',
-              }}>AI Vision Labs</div>
-              <div style={{
-                fontFamily: 'JetBrains Mono, monospace', fontSize: '11px',
-                color: 'var(--text-3)', lineHeight: 1.8,
-              }}>
-                MSME Registered · India<br />
-                Udyam Reg. No. UDYAM-TN-02-0483528<br />
-                Chennai, Tamil Nadu
-              </div>
+          {/* Team + registration */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {/* Team card */}
+            <div className="card" style={{ overflow: 'hidden' }}>
+              {[
+                {
+                  role: 'CHIEF EXECUTIVE OFFICER',
+                  name: 'Prabhakaran',
+                  bio: 'Leading AI Vision Labs\' strategic direction and client engagements.',
+                },
+                {
+                  role: 'FOUNDER · AI/ML ENGINEER',
+                  name: 'Rajaganapathy M',
+                  bio: 'M.Tech AI, SRM (9.6 CGPA) · Patent filed · IEEE · AWS Certified · 2+ years independent AI engineering.',
+                },
+              ].map((p, i, arr) => (
+                <div key={p.name} style={{
+                  padding: '18px 20px',
+                  borderBottom: i < arr.length - 1 ? '1px solid var(--border)' : 'none',
+                }}>
+                  <div style={{
+                    fontFamily: 'var(--f-mono)', fontSize: 9.5,
+                    letterSpacing: '0.12em', color: 'var(--clay)',
+                    marginBottom: 4,
+                  }}>{p.role}</div>
+                  <div style={{
+                    fontFamily: 'var(--f-sans)', fontWeight: 600,
+                    fontSize: 14, color: 'var(--ink)', marginBottom: 5,
+                  }}>{p.name}</div>
+                  <div style={{
+                    fontFamily: 'var(--f-sans)', fontSize: 12,
+                    fontWeight: 300, color: 'var(--ink3)', lineHeight: 1.6,
+                  }}>{p.bio}</div>
+                </div>
+              ))}
             </div>
 
-            {/* Team */}
+            {/* MSME plate */}
             <div style={{
               background: 'var(--bg3)',
               border: '1px solid var(--border)',
-              padding: '1.5rem',
+              borderRadius: 10, padding: '14px 18px',
+              fontFamily: 'var(--f-mono)', fontSize: 10,
+              color: 'var(--ink3)', lineHeight: 2,
+              letterSpacing: '0.04em',
             }}>
-              <div className="section-label" style={{ marginBottom: '1.25rem' }}>Leadership</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                {[
-                  {
-                    name: 'Prabhakaran',
-                    role: 'Chief Executive Officer',
-                    detail: 'Leading the company\'s strategic direction and client engagements.',
-                  },
-                  {
-                    name: 'Rajaganapathy M',
-                    role: 'Founder · AI/ML Engineer',
-                    detail: 'M.Tech AI (SRM, 9.6 CGPA) · Patent filed · IEEE · 2+ years independent AI work · AWS Certified.',
-                  },
-                ].map(p => (
-                  <div key={p.name} style={{
-                    paddingBottom: '1.25rem',
-                    borderBottom: '1px solid var(--border)',
-                  }}>
-                    <div style={{
-                      fontFamily: 'Syne, sans-serif', fontWeight: 600,
-                      fontSize: '1rem', color: 'var(--text)', marginBottom: '2px',
-                    }}>{p.name}</div>
-                    <div style={{
-                      fontFamily: 'JetBrains Mono, monospace', fontSize: '10px',
-                      letterSpacing: '0.1em', color: 'var(--amber)',
-                      marginBottom: '0.4rem',
-                    }}>{p.role}</div>
-                    <div style={{
-                      fontFamily: 'Inter, sans-serif', fontSize: '12.5px',
-                      color: 'var(--text-3)', lineHeight: 1.6,
-                    }}>{p.detail}</div>
-                  </div>
-                ))}
-              </div>
+              MSME REGISTERED · INDIA<br />
+              UDYAM-TN-02-0483528<br />
+              CHENNAI, TAMIL NADU
             </div>
 
-            {/* Credentials summary */}
-            <div style={{
-              background: 'var(--bg3)',
-              border: '1px solid var(--border)',
-              padding: '1.5rem',
-            }}>
-              <div className="section-label" style={{ marginBottom: '1rem' }}>Credentials</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {[
-                  'AWS Solutions Architect Associate',
-                  'Azure · GCP · Docker · CI/CD',
-                  'M.Tech AI — SRM Institute (CGPA 9.6/10)',
-                  'IITM Pravartak AI/ML Program',
-                  'Kaggle AI Agents Intensive (Google)',
-                  'NPTEL Top 5% — IoT (86%)',
-                ].map((c, i) => (
-                  <div key={i} style={{
-                    fontFamily: 'JetBrains Mono, monospace',
-                    fontSize: '11px', color: 'var(--text-3)',
-                    display: 'flex', alignItems: 'center', gap: '0.5rem',
-                  }}>
-                    <span style={{ color: 'var(--amber)', fontSize: '10px' }}>›</span>
-                    {c}
-                  </div>
-                ))}
-              </div>
+            {/* Credentials */}
+            <div className="card" style={{ padding: '16px 20px' }}>
+              <div style={{
+                fontFamily: 'var(--f-mono)', fontSize: 10,
+                letterSpacing: '0.14em', color: 'var(--ink3)',
+                marginBottom: 12,
+              }}>CREDENTIALS</div>
+              {[
+                'AWS Solutions Architect Associate',
+                'M.Tech AI — SRM Institute (9.6/10 CGPA)',
+                'IITM Pravartak AI/ML Program',
+                'Kaggle AI Agents Intensive (Google)',
+                'NPTEL Top 5% — IoT (86%, 50,282 candidates)',
+                'Azure · GCP · Docker · CI/CD',
+              ].map((c, i) => (
+                <div key={i} style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  fontFamily: 'var(--f-sans)', fontSize: 12,
+                  color: 'var(--ink2)', fontWeight: 300,
+                  marginBottom: 6, lineHeight: 1.4,
+                }}>
+                  <span style={{ color: 'var(--clay)', fontSize: 11, flexShrink: 0 }}>›</span>
+                  {c}
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -763,168 +850,174 @@ function About() {
   )
 }
 
-// ─── Contact ──────────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────────────────
+   CONTACT
+───────────────────────────────────────────────────────────────────────────── */
 function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', company: '', message: '' })
-  const [status, setStatus] = useState(null) // null | 'sending' | 'sent' | 'error'
+  const [form, setForm] = useState({ name: '', company: '', email: '', message: '' })
+  const [sent, setSent] = useState(false)
 
-  function handleChange(e) {
-    setForm(f => ({ ...f, [e.target.name]: e.target.value }))
-  }
+  const handle = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
 
-  function handleSubmit(e) {
+  const submit = e => {
     e.preventDefault()
-    // Mailto fallback — replace with Vercel serverless function for production
-    const subject = encodeURIComponent(`Project Inquiry from ${form.name}${form.company ? ` (${form.company})` : ''}`)
+    const sub = encodeURIComponent(`Project Inquiry — ${form.name}${form.company ? ` (${form.company})` : ''}`)
     const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\nCompany: ${form.company}\n\n${form.message}`)
-    window.location.href = `mailto:contact@aivisionlabs.tech?subject=${subject}&body=${body}`
-    setStatus('sent')
+    window.location.href = `mailto:contact@aivisionlabs.tech?subject=${sub}&body=${body}`
+    setSent(true)
   }
 
   return (
-    <section id="contact" style={{ padding: '8rem 2.5rem', background: 'var(--bg)' }}>
-      <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-        <div style={{ marginBottom: '4rem' }}>
-          <div className="section-label" style={{ marginBottom: '1.5rem' }}>Get in Touch</div>
-          <h2 style={{
-            fontFamily: 'Syne, sans-serif', fontWeight: 700,
-            fontSize: 'clamp(2rem, 4vw, 3.2rem)',
-            lineHeight: 1.1, color: 'var(--text)',
-            maxWidth: '580px',
-          }}>
-            Available for select<br />
-            <span style={{ color: 'var(--amber)' }}>project engagements.</span>
-          </h2>
-          <p style={{
-            fontFamily: 'Inter, sans-serif', fontSize: '14px',
-            color: 'var(--text-2)', maxWidth: '480px',
-            lineHeight: 1.75, marginTop: '1.25rem',
-          }}>
-            If you have a real AI problem that needs a production solution,
-            tell us about it. We respond within 24 hours.
-          </p>
-        </div>
+    <section id="contact" style={{ padding: '80px clamp(20px, 5vw, 72px)', background: 'var(--bg)' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+        <div className="section-label">Get in touch</div>
+        <h2 className="section-h2" style={{ marginBottom: 14 }}>
+          Available for select<br /><em>project engagements</em>.
+        </h2>
+        <p style={{
+          fontFamily: 'var(--f-sans)', fontSize: 15, fontWeight: 300,
+          color: 'var(--ink2)', lineHeight: 1.8, marginBottom: 48,
+          maxWidth: 440,
+        }}>
+          Tell us about your project. We respond to all inquiries within 24 hours.
+          Serious work only.
+        </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '4rem' }}>
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr',
+          gap: 48, alignItems: 'start',
+        }}>
           {/* Form */}
-          <div>
-            {status === 'sent' ? (
+          {sent ? (
+            <div style={{
+              padding: 28,
+              background: 'var(--clay-light)',
+              border: '1px solid var(--clay-border)',
+              borderRadius: 12,
+            }}>
               <div style={{
-                background: 'rgba(245,166,35,0.08)',
-                border: '1px solid rgba(245,166,35,0.25)',
-                padding: '2rem',
-                textAlign: 'center',
+                fontFamily: 'var(--f-serif)', fontWeight: 500,
+                fontSize: 18, color: 'var(--clay)', marginBottom: 8,
+              }}>Your email client is open.</div>
+              <div style={{
+                fontFamily: 'var(--f-sans)', fontSize: 13, fontWeight: 300,
+                color: 'var(--ink2)',
               }}>
-                <div style={{
-                  fontFamily: 'Syne, sans-serif', fontWeight: 700,
-                  fontSize: '1.2rem', color: 'var(--amber)', marginBottom: '0.5rem',
-                }}>Your email client is open.</div>
-                <div style={{
-                  fontFamily: 'Inter, sans-serif', fontSize: '13px',
-                  color: 'var(--text-2)',
-                }}>Send the email to reach us at contact@aivisionlabs.tech</div>
+                Send the drafted email to reach us at contact@aivisionlabs.tech.
+                We'll respond within 24 hours.
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                  <div>
-                    <label className="form-label">NAME</label>
-                    <input className="form-input" type="text" name="name" required
-                      value={form.name} onChange={handleChange} placeholder="Yours" />
-                  </div>
-                  <div>
-                    <label className="form-label">COMPANY</label>
-                    <input className="form-input" type="text" name="company"
-                      value={form.company} onChange={handleChange} placeholder="Optional" />
-                  </div>
+            </div>
+          ) : (
+            <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div>
+                  <label className="form-label">NAME</label>
+                  <input className="form-input" type="text" name="name"
+                    required value={form.name} onChange={handle} placeholder="Yours" />
                 </div>
                 <div>
-                  <label className="form-label">EMAIL</label>
-                  <input className="form-input" type="email" name="email" required
-                    value={form.email} onChange={handleChange} placeholder="you@company.com" />
+                  <label className="form-label">COMPANY</label>
+                  <input className="form-input" type="text" name="company"
+                    value={form.company} onChange={handle} placeholder="Optional" />
                 </div>
-                <div>
-                  <label className="form-label">TELL US ABOUT YOUR PROJECT</label>
-                  <textarea className="form-input" name="message" required rows={5}
-                    value={form.message} onChange={handleChange}
-                    placeholder="What are you building? What's the problem AI needs to solve?"
-                    style={{ resize: 'vertical', minHeight: '120px' }} />
-                </div>
-                <button type="submit" className="btn-primary" style={{ justifyContent: 'center' }}>
-                  Send Inquiry →
-                </button>
-              </form>
-            )}
-          </div>
+              </div>
+              <div>
+                <label className="form-label">EMAIL</label>
+                <input className="form-input" type="email" name="email"
+                  required value={form.email} onChange={handle} placeholder="you@company.com" />
+              </div>
+              <div>
+                <label className="form-label">TELL US ABOUT YOUR PROJECT</label>
+                <textarea className="form-input" name="message" required
+                  rows={5} value={form.message} onChange={handle}
+                  placeholder="What are you building? What problem needs AI to solve?"
+                  style={{ resize: 'vertical', minHeight: 110 }} />
+              </div>
+              <button type="submit" className="btn-primary" style={{ justifyContent: 'center', marginTop: 4 }}>
+                Send inquiry →
+              </button>
+            </form>
+          )}
 
           {/* Direct contact */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingTop: '0.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
             <div>
-              <div className="section-label" style={{ marginBottom: '1rem' }}>Direct</div>
-              <a href="mailto:contact@aivisionlabs.tech" style={{
-                fontFamily: 'Syne, sans-serif', fontWeight: 600,
-                fontSize: '1rem', color: 'var(--text)',
-                textDecoration: 'none', display: 'block', marginBottom: '0.25rem',
-                transition: 'color 0.15s',
-              }}
-              onMouseEnter={e => e.target.style.color = 'var(--amber)'}
-              onMouseLeave={e => e.target.style.color = 'var(--text)'}
-              >contact@aivisionlabs.tech</a>
               <div style={{
-                fontFamily: 'JetBrains Mono, monospace', fontSize: '11px',
-                color: 'var(--text-3)',
-              }}>Business inquiries only</div>
-            </div>
-
-            <div>
-              <div className="section-label" style={{ marginBottom: '1rem' }}>Connect</div>
-              <a
-                href="https://linkedin.com/in/raja-ganapathy-36b00658"
-                target="_blank" rel="noopener noreferrer"
-                style={{
-                  fontFamily: 'Inter, sans-serif', fontSize: '13.5px',
-                  color: 'var(--text-2)', textDecoration: 'none',
-                  display: 'flex', alignItems: 'center', gap: '0.5rem',
-                  transition: 'color 0.15s',
-                }}
-                onMouseEnter={e => e.currentTarget.style.color = 'var(--amber)'}
-                onMouseLeave={e => e.currentTarget.style.color = 'var(--text-2)'}
+                fontFamily: 'var(--f-mono)', fontSize: 10,
+                letterSpacing: '0.14em', color: 'var(--ink3)', marginBottom: 8,
+              }}>DIRECT</div>
+              <a href="mailto:contact@aivisionlabs.tech" style={{
+                fontFamily: 'var(--f-serif)', fontWeight: 400,
+                fontSize: 20, color: 'var(--ink)',
+                textDecoration: 'none', display: 'block',
+                letterSpacing: '-0.01em',
+                transition: 'color 0.15s ease',
+              }}
+                onMouseEnter={e => e.target.style.color = 'var(--clay)'}
+                onMouseLeave={e => e.target.style.color = 'var(--ink)'}
               >
-                LinkedIn → AI Vision Labs / Rajaganapathy M
+                contact@aivisionlabs.tech
               </a>
             </div>
 
             <div>
-              <div className="section-label" style={{ marginBottom: '1rem' }}>Models & Research</div>
+              <div style={{
+                fontFamily: 'var(--f-mono)', fontSize: 10,
+                letterSpacing: '0.14em', color: 'var(--ink3)', marginBottom: 8,
+              }}>RESEARCH & MODELS</div>
               <a href="https://huggingface.co/RajGana" target="_blank" rel="noopener noreferrer"
                 style={{
-                  fontFamily: 'Inter, sans-serif', fontSize: '13.5px',
-                  color: 'var(--text-2)', textDecoration: 'none', display: 'block',
-                  transition: 'color 0.15s',
+                  fontFamily: 'var(--f-sans)', fontSize: 13.5, fontWeight: 400,
+                  color: 'var(--ink2)', textDecoration: 'none',
+                  transition: 'color 0.15s ease', display: 'block',
                 }}
-                onMouseEnter={e => e.target.style.color = 'var(--amber)'}
-                onMouseLeave={e => e.target.style.color = 'var(--text-2)'}
+                onMouseEnter={e => e.target.style.color = 'var(--clay)'}
+                onMouseLeave={e => e.target.style.color = 'var(--ink2)'}
               >
                 huggingface.co/RajGana →
               </a>
               <div style={{
-                fontFamily: 'JetBrains Mono, monospace', fontSize: '11px',
-                color: 'var(--text-3)', marginTop: '0.25rem',
+                fontFamily: 'var(--f-mono)', fontSize: 10,
+                color: 'var(--ink3)', marginTop: 3,
+                letterSpacing: '0.06em',
               }}>3 live fine-tuned models</div>
+            </div>
+
+            <div>
+              <div style={{
+                fontFamily: 'var(--f-mono)', fontSize: 10,
+                letterSpacing: '0.14em', color: 'var(--ink3)', marginBottom: 8,
+              }}>LINKEDIN</div>
+              <a href="https://linkedin.com/in/raja-ganapathy-36b00658"
+                target="_blank" rel="noopener noreferrer"
+                style={{
+                  fontFamily: 'var(--f-sans)', fontSize: 13.5,
+                  color: 'var(--ink2)', textDecoration: 'none',
+                  transition: 'color 0.15s ease',
+                }}
+                onMouseEnter={e => e.target.style.color = 'var(--clay)'}
+                onMouseLeave={e => e.target.style.color = 'var(--ink2)'}
+              >
+                Rajaganapathy M →
+              </a>
             </div>
 
             <div style={{
               background: 'var(--bg2)',
               border: '1px solid var(--border)',
-              padding: '1.25rem',
+              borderRadius: 10, padding: '16px 18px',
             }}>
               <div style={{
-                fontFamily: 'JetBrains Mono, monospace', fontSize: '10px',
-                letterSpacing: '0.12em', color: 'var(--amber)', marginBottom: '0.5rem',
+                fontFamily: 'var(--f-mono)', fontSize: 10,
+                letterSpacing: '0.12em', color: 'var(--clay)',
+                marginBottom: 6,
               }}>RESPONSE TIME</div>
               <div style={{
-                fontFamily: 'Inter, sans-serif', fontSize: '13px', color: 'var(--text-2)',
-              }}>We respond to all project inquiries within 24 hours. Serious work only.</div>
+                fontFamily: 'var(--f-sans)', fontSize: 13,
+                fontWeight: 300, color: 'var(--ink2)', lineHeight: 1.65,
+              }}>
+                All project inquiries answered within 24 hours. Serious work only.
+              </div>
             </div>
           </div>
         </div>
@@ -933,38 +1026,37 @@ function Contact() {
   )
 }
 
-// ─── Footer ───────────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────────────────────────────────────────── */
 function Footer() {
   return (
     <footer style={{
-      padding: '3rem 2.5rem',
-      background: 'var(--bg2)',
-      borderTop: '1px solid var(--border)',
+      background: 'var(--ink)',
+      padding: '28px clamp(20px, 5vw, 72px)',
     }}>
       <div style={{
-        maxWidth: '1100px', margin: '0 auto',
+        maxWidth: 900, margin: '0 auto',
         display: 'flex', justifyContent: 'space-between',
-        alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem',
+        alignItems: 'center', flexWrap: 'wrap', gap: 16,
       }}>
-        <Logo size={24} />
+        <Logo dark />
         <div style={{
-          fontFamily: 'JetBrains Mono, monospace',
-          fontSize: '10px', letterSpacing: '0.1em',
-          color: 'var(--text-3)',
+          fontFamily: 'var(--f-mono)', fontSize: 10,
+          letterSpacing: '0.08em', color: 'var(--d-text3)',
         }}>
           © {new Date().getFullYear()} AI Vision Labs · UDYAM-TN-02-0483528 · Chennai, India
         </div>
-        <div style={{ display: 'flex', gap: '2rem' }}>
+        <div style={{ display: 'flex', gap: 22 }}>
           {['#services', '#work', '#about', '#contact'].map(href => (
             <a key={href} href={href} style={{
-              fontFamily: 'JetBrains Mono, monospace',
-              fontSize: '10px', letterSpacing: '0.1em',
-              color: 'var(--text-3)', textDecoration: 'none',
-              transition: 'color 0.15s',
+              fontFamily: 'var(--f-mono)', fontSize: 10,
+              letterSpacing: '0.08em', color: 'var(--d-text3)',
+              textDecoration: 'none', transition: 'color 0.15s ease',
             }}
-            onMouseEnter={e => e.target.style.color = 'var(--text-2)'}
-            onMouseLeave={e => e.target.style.color = 'var(--text-3)'}
-            >{href.replace('#', '')}</a>
+              onMouseEnter={e => e.target.style.color = 'var(--d-text2)'}
+              onMouseLeave={e => e.target.style.color = 'var(--d-text3)'}
+            >{href.slice(1)}</a>
           ))}
         </div>
       </div>
@@ -972,13 +1064,15 @@ function Footer() {
   )
 }
 
-// ─── App ─────────────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────────────────
+   APP ROOT
+───────────────────────────────────────────────────────────────────────────── */
 export default function App() {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', onScroll)
+    const onScroll = () => setScrolled(window.scrollY > 36)
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
@@ -987,13 +1081,11 @@ export default function App() {
       <Nav scrolled={scrolled} />
       <main>
         <Hero />
-        <div className="divider" />
+        <StatsBar />
         <Services />
-        <div className="divider" />
         <Work />
-        <div className="divider" />
+        <DevSection />
         <About />
-        <div className="divider" />
         <Contact />
       </main>
       <Footer />
