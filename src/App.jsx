@@ -863,7 +863,7 @@ function Contact() {
     e.preventDefault()
     const sub = encodeURIComponent(`Project Inquiry — ${form.name}${form.company ? ` (${form.company})` : ''}`)
     const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\nCompany: ${form.company}\n\n${form.message}`)
-    window.location.href = `mailto:contact@aivisionlabs.tech?subject=${sub}&body=${body}`
+    window.location.href = `mailto:rajaganaa@aivisionlabs.tech?subject=${sub}&body=${body}`
     setSent(true)
   }
 
