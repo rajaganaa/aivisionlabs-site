@@ -304,9 +304,9 @@ function Hero() {
           marginBottom:12,
           animation:'fadeUp .85s .14s cubic-bezier(.16,1,.3,1) both',
         }}>
-          AI for Every Home.<br/>
+          Building Intelligent Systems.<br/>
           <em style={{ fontStyle:'italic', color:'var(--clay)' }}>Intelligence</em><br/>
-          for Every Hand.
+          for Every Industry.
         </h1>
 
         {/* Sub */}
