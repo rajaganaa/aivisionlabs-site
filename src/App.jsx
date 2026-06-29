@@ -903,7 +903,7 @@ function Contact() {
                 fontFamily: 'var(--f-sans)', fontSize: 13, fontWeight: 300,
                 color: 'var(--ink2)',
               }}>
-                Send the drafted email to reach us at contact@aivisionlabs.tech.
+                Send the drafted email to reach us at rajaganaa@aivisionlabs.tech.
                 We'll respond within 24 hours.
               </div>
             </div>
@@ -946,7 +946,7 @@ function Contact() {
                 fontFamily: 'var(--f-mono)', fontSize: 10,
                 letterSpacing: '0.14em', color: 'var(--ink3)', marginBottom: 8,
               }}>DIRECT</div>
-              <a href="mailto:contact@aivisionlabs.tech" style={{
+              <a href="mailto:rajaganaa@aivisionlabs.tech" style={{
                 fontFamily: 'var(--f-serif)', fontWeight: 400,
                 fontSize: 20, color: 'var(--ink)',
                 textDecoration: 'none', display: 'block',
@@ -956,7 +956,7 @@ function Contact() {
                 onMouseEnter={e => e.target.style.color = 'var(--clay)'}
                 onMouseLeave={e => e.target.style.color = 'var(--ink)'}
               >
-                contact@aivisionlabs.tech
+                rajaganaa@aivisionlabs.tech
               </a>
             </div>
 
