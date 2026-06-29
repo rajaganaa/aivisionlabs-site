@@ -304,8 +304,8 @@ function Hero() {
           marginBottom:12,
           animation:'fadeUp .85s .14s cubic-bezier(.16,1,.3,1) both',
         }}>
-          Building Intelligent Systems.<br/>
-          <em style={{ fontStyle:'italic', color:'var(--clay)' }}>Intelligence</em><br/>
+          Building <br/>
+          <em style={{ fontStyle:'italic', color:'var(--clay)' }}>Intelligent Systems</em><br/>
           for Every Industry.
         </h1>
 
