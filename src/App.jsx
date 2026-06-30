@@ -1149,6 +1149,7 @@ function Contact() {
     e.preventDefault()
     setStatus('sending')
     try {
+<<<<<<< HEAD
       // Web3Forms — free, no signup. Get your key at web3forms.com, set email there.
       // Replace the access_key below with your own key from web3forms.com
       const res = await fetch('https://api.web3forms.com/submit', {
@@ -1163,6 +1164,18 @@ function Contact() {
           message:  form.message,
           subject:  'Project Inquiry from ' + form.name + (form.company ? ' (' + form.company + ')' : ''),
           from_name: 'AI Vision Labs Website',
+=======
+      const res = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:     form.name,
+          company:  form.company,
+          _replyto: form.email,
+          service:  form.service,
+          message:  form.message,
+          _subject: 'Project Inquiry from ' + form.name + (form.company ? ' (' + form.company + ')' : ''),
+>>>>>>> f1caa1daca128488488763f46e029e5746cf87b5
         }),
       })
       setStatus(res.ok ? 'sent' : 'error')
