@@ -127,28 +127,95 @@ const STATS = [
 /* ═══════════════════════════════════════════════════════════════════════════
    SHARED COMPONENTS
 ═══════════════════════════════════════════════════════════════════════════ */
+/* Vertical blinking Shiva third eye — Tritiya Netra */
+const EYE_STYLE = `
+  @keyframes tritiaBlink {
+    0%,42%,100% { transform: scaleY(1); }
+    45%          { transform: scaleY(0.06); }
+    48%          { transform: scaleY(1); }
+    51%          { transform: scaleY(0.08); }
+    54%          { transform: scaleY(1); }
+  }
+  @keyframes tritiaPupil {
+    0%,42%,100% { opacity:1; }
+    45%,51%     { opacity:0; }
+    48%,54%     { opacity:1; }
+  }
+  @keyframes tritiaGlow {
+    0%,100% { opacity:0.6; }
+    50%     { opacity:1; }
+  }
+  .tritia-eye-body { animation: tritiaBlink 5s ease-in-out infinite; transform-origin: 14px 15px; }
+  .tritia-pupil    { animation: tritiaPupil 5s ease-in-out infinite; }
+  .tritia-glow     { animation: tritiaGlow 3s ease-in-out infinite; }
+`
+
 function LogoMark({ size = 28 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 28 28" fill="none" aria-hidden="true">
-      <defs>
-        <linearGradient id="lg" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#C8720A"/>
-          <stop offset="100%" stopColor="#964A08"/>
-        </linearGradient>
-      </defs>
-      <rect width="28" height="28" rx="6" fill="url(#lg)"/>
-      <ellipse cx="14" cy="14" rx="8.5" ry="5.5" stroke="rgba(0,0,0,0.42)" strokeWidth="1.1" fill="none"/>
-      <circle cx="14" cy="14" r="3" fill="rgba(0,0,0,0.38)"/>
-      <circle cx="14" cy="14" r="1.3" fill="rgba(255,255,255,0.72)"/>
-      <line x1="14" y1="9.5" x2="14" y2="18.5" stroke="rgba(255,255,255,0.22)" strokeWidth="0.6"/>
-      <line x1="9.5" y1="14" x2="18.5" y2="14" stroke="rgba(255,255,255,0.22)" strokeWidth="0.6"/>
-    </svg>
+    <>
+      <style>{EYE_STYLE}</style>
+      <svg width={size} height={size} viewBox="0 0 28 30" fill="none" aria-hidden="true">
+        <defs>
+          <radialGradient id="eyeIris" cx="50%" cy="45%" r="55%">
+            <stop offset="0%" stopColor="#3D1200"/>
+            <stop offset="100%" stopColor="#1A0600"/>
+          </radialGradient>
+          <radialGradient id="eyeGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#E8A020" stopOpacity="0.9"/>
+            <stop offset="100%" stopColor="#8B4A06" stopOpacity="0"/>
+          </radialGradient>
+          <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#7A3C0A"/>
+            <stop offset="100%" stopColor="#4A2006"/>
+          </radialGradient>
+        </defs>
+
+        {/* Square tile background */}
+        <rect width="28" height="30" rx="6" fill="url(#bgGrad)"/>
+
+        {/* Subtle ambient glow behind eye */}
+        <ellipse cx="14" cy="15" rx="9" ry="11" fill="url(#eyeGlow)" className="tritia-glow"/>
+
+        {/* THE EYE — vertical orientation, blinking group */}
+        <g className="tritia-eye-body">
+          {/* Eye white — vertical almond (pointed top & bottom) */}
+          <path
+            d="M14,5 C17.5,7 19,10.5 19,15 C19,19.5 17.5,23 14,25 C10.5,23 9,19.5 9,15 C9,10.5 10.5,7 14,5 Z"
+            fill="#FFF9F4"
+            stroke="#7A3C0A" strokeWidth="0.5"
+          />
+
+          {/* Iris — dark rich brown */}
+          <ellipse cx="14" cy="15" rx="4.2" ry="5.2" fill="url(#eyeIris)"/>
+
+          {/* Iris ring detail */}
+          <ellipse cx="14" cy="15" rx="4.2" ry="5.2" fill="none"
+            stroke="rgba(200,114,10,0.4)" strokeWidth="0.6"/>
+
+          {/* Pupil — vertical slit (like Shiva's eye) */}
+          <ellipse cx="14" cy="15" rx="1.4" ry="3" fill="#060200" className="tritia-pupil"/>
+
+          {/* Pupil divine light reflection */}
+          <ellipse cx="13.2" cy="13.2" rx="0.7" ry="1" fill="rgba(255,240,200,0.75)" className="tritia-pupil"/>
+        </g>
+
+        {/* Upper eyelid crease lines */}
+        <path d="M10.5,8.5 Q14,6.5 17.5,8.5" fill="none"
+          stroke="rgba(80,30,5,0.5)" strokeWidth="0.5"/>
+        {/* Lower eyelid crease */}
+        <path d="M10.5,21.5 Q14,23.5 17.5,21.5" fill="none"
+          stroke="rgba(80,30,5,0.4)" strokeWidth="0.4"/>
+
+        {/* Decorative dot — tilak bindu — below eye (professional, not spiritual-heavy) */}
+        <circle cx="14" cy="27.5" r="1" fill="rgba(232,160,32,0.6)"/>
+      </svg>
+    </>
   )
 }
 
 function Logo({ dark = false, size = 28 }) {
   return (
-    <a href="#top" style={{ display:'flex', alignItems:'center', gap:9, textDecoration:'none' }}>
+    <a href="#top" style={{ display:'flex', alignItems:'center', gap:10, textDecoration:'none' }}>
       <LogoMark size={size}/>
       <span style={{
         fontFamily:'var(--f-sans)', fontWeight:600, fontSize:14.5,
@@ -304,9 +371,9 @@ function Hero() {
           marginBottom:12,
           animation:'fadeUp .85s .14s cubic-bezier(.16,1,.3,1) both',
         }}>
-          Building <br/>
-          <em style={{ fontStyle:'italic', color:'var(--clay)' }}>Intelligent Systems</em><br/>
-          for Every Industry.
+          AI for Every Home.<br/>
+          <em style={{ fontStyle:'italic', color:'var(--clay)' }}>Intelligence</em><br/>
+          for Every Hand.
         </h1>
 
         {/* Sub */}
@@ -1075,14 +1142,30 @@ function Newsletter() {
 ═══════════════════════════════════════════════════════════════════════════ */
 function Contact() {
   const [form, setForm] = useState({ name:'', company:'', email:'', service:'', message:'' })
-  const [sent, setSent] = useState(false)
+  const [status, setStatus] = useState('idle')
   const handle = e => setForm(f => ({ ...f, [e.target.name]:e.target.value }))
-  const submit = e => {
+
+  const submit = async e => {
     e.preventDefault()
-    const sub = encodeURIComponent(`Project Inquiry — ${form.name}${form.company ? ` (${form.company})` : ''}`)
-    const body = encodeURIComponent(`Name: ${form.name}\nCompany: ${form.company}\nEmail: ${form.email}\nService: ${form.service}\n\n${form.message}`)
-    window.location.href = `mailto:rajaganaa@aivisionlabs.tech?subject=${sub}&body=${body}`
-    setSent(true)
+    setStatus('sending')
+    try {
+      const res = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:     form.name,
+          company:  form.company,
+          _replyto: form.email,
+          service:  form.service,
+          message:  form.message,
+          _subject: 'Project Inquiry from ' + form.name + (form.company ? ' (' + form.company + ')' : ''),
+        }),
+      })
+      setStatus(res.ok ? 'sent' : 'error')
+      if (res.ok) setForm({ name:'', company:'', email:'', service:'', message:'' })
+    } catch {
+      setStatus('error')
+    }
   }
 
   return (
@@ -1095,11 +1178,18 @@ function Contact() {
         </p>
 
         <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:48,alignItems:'start' }}>
-          {sent ? (
+          {status === 'sent' ? (
             <div style={{ padding:28,background:'var(--clay-l)',border:'1px solid var(--clay-b)',borderRadius:'var(--r)' }}>
-              <div style={{ fontFamily:'var(--f-serif)',fontWeight:500,fontSize:18,color:'var(--clay)',marginBottom:8 }}>Email client is open.</div>
-              <div style={{ fontFamily:'var(--f-sans)',fontSize:13,fontWeight:300,color:'var(--ink2)' }}>
-                Send the drafted message to rajaganaa@aivisionlabs.tech. We'll reply within 24 hours.
+              <div style={{ fontFamily:'var(--f-serif)',fontWeight:500,fontSize:20,color:'var(--clay)',marginBottom:10 }}>Message sent. ✓</div>
+              <div style={{ fontFamily:'var(--f-sans)',fontSize:13.5,fontWeight:300,color:'var(--ink2)',lineHeight:1.7 }}>
+                Your inquiry has been delivered directly to <strong>rajaganaa@aivisionlabs.tech</strong>. We'll reply within 24 hours.
+              </div>
+            </div>
+          ) : status === 'error' ? (
+            <div style={{ padding:28,background:'#FEF2F2',border:'1px solid #FECACA',borderRadius:'var(--r)' }}>
+              <div style={{ fontFamily:'var(--f-serif)',fontWeight:500,fontSize:18,color:'#B91C1C',marginBottom:8 }}>Couldn't send — try email directly.</div>
+              <div style={{ fontFamily:'var(--f-sans)',fontSize:13,fontWeight:300,color:'#7F1D1D' }}>
+                Please email us at <a href="mailto:rajaganaa@aivisionlabs.tech" style={{color:'#B91C1C'}}>rajaganaa@aivisionlabs.tech</a> and we'll respond within 24 hours.
               </div>
             </div>
           ) : (
@@ -1125,7 +1215,10 @@ function Contact() {
                 <textarea className="form-input" name="message" required rows={5} value={form.message} onChange={handle}
                   placeholder="What are you building? What problem does AI need to solve?" style={{ resize:'vertical',minHeight:110 }}/>
               </div>
-              <button type="submit" className="btn btn-clay" style={{ justifyContent:'center',marginTop:4 }}>Send inquiry →</button>
+              <button type="submit" className="btn btn-clay" disabled={status==='sending'}
+                style={{ justifyContent:'center', marginTop:4, opacity: status==='sending' ? 0.7 : 1 }}>
+                {status === 'sending' ? 'Sending…' : 'Send inquiry →'}
+              </button>
             </form>
           )}
 
