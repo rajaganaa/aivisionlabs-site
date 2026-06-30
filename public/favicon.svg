@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7A3C0A"/>
+      <stop offset="100%" stop-color="#4A2006"/>
+    </radialGradient>
+    <radialGradient id="iris" cx="50%" cy="42%" r="55%">
+      <stop offset="0%" stop-color="#3D1200"/>
+      <stop offset="100%" stop-color="#1A0600"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#E8A020" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#8B4A06" stop-opacity="0"/>
+    </radialGradient>
+    <style>
+      @keyframes blink {
+        0%,40%,100% { transform: scaleY(1); }
+        44%          { transform: scaleY(0.05); }
+        47%          { transform: scaleY(1); }
+        50%          { transform: scaleY(0.07); }
+        53%          { transform: scaleY(1); }
+      }
+      @keyframes pupilHide {
+        0%,40%,100% { opacity:1; }
+        44%,50%     { opacity:0; }
+        47%,53%     { opacity:1; }
+      }
+      @keyframes glowPulse {
+        0%,100% { opacity:0.55; }
+        50%     { opacity:1; }
+      }
+      .eye-g { animation: blink 5s ease-in-out infinite; transform-origin: 16px 16px; }
+      .pupil  { animation: pupilHide 5s ease-in-out infinite; }
+      .eg     { animation: glowPulse 3s ease-in-out infinite; }
+    </style>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="url(#bg)"/>
+  <ellipse cx="16" cy="16" rx="9" ry="12" fill="url(#glow)" class="eg"/>
+  <g class="eye-g">
+    <path d="M16,4 C19.5,6.5 21,10.5 21,16 C21,21.5 19.5,25.5 16,28 C12.5,25.5 11,21.5 11,16 C11,10.5 12.5,6.5 16,4 Z"
+          fill="#FFF9F3" stroke="#6B3008" stroke-width="0.5"/>
+    <ellipse cx="16" cy="16" rx="4.5" ry="6" fill="url(#iris)"/>
+    <ellipse cx="16" cy="16" rx="4.5" ry="6" fill="none" stroke="rgba(200,114,10,0.45)" stroke-width="0.6"/>
+    <ellipse cx="16" cy="16" rx="1.5" ry="3.2" fill="#060100" class="pupil"/>
+    <ellipse cx="15" cy="14" rx="0.8" ry="1.1" fill="rgba(255,238,190,0.8)" class="pupil"/>
+  </g>
+  <circle cx="16" cy="30" r="1.1" fill="rgba(232,160,32,0.55)"/>
+</svg>
