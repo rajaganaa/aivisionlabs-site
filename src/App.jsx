@@ -23,14 +23,14 @@ const SERVICES = [
     icon:'◎', span:'row2',
     title:'Agentic AI',
     desc:'Autonomous systems that plan, act, and iterate.',
-    bullets:['Multi-agent orchestration','Spec-driven agents with memory','Tool-calling workflows','Antahkarana 5-stage reasoning'],
-    badge:{ label:'PATENT FILED', body:'App No. 202641043947 · IEEE' },
+    bullets:['Hierarchical multi-agent systems (Google ADK)','Spec-driven agents with memory','Tool-calling workflows','LLM-as-Judge evaluation','Antahkarana adaptive reasoning'],
+    badge:{ label:'PATENT FILED · IEEE XPLORE', body:'App No. 202641043947 · ICSTSDG 2026' },
   },
   {
     icon:'⬡', span:'normal',
     title:'AI/ML Development',
     desc:'Custom ML from data pipeline to production API.',
-    bullets:['Computer vision pipelines','NLP & document intelligence'],
+    bullets:['Computer vision & multimodal VQA','NLP & document intelligence','Classical ML (XGBoost, scikit-learn)'],
   },
   {
     icon:'▣', span:'normal',
@@ -42,12 +42,12 @@ const SERVICES = [
     icon:'◆', span:'col2',
     title:'AI Deployment & MLOps',
     desc:"We don't stop at the model — we ship, monitor, and maintain.",
-    tags:['Azure','AWS SageMaker','GCP Vertex AI','FastAPI','Docker','CI/CD','DPDP 2023'],
+    tags:['Azure','AWS SageMaker','GCP Vertex AI','FastAPI','Docker','Terraform','CI/CD','Prometheus / Grafana','DPDP 2023'],
   },
 ]
 
 const INDUSTRIES = [
-  { icon:'🏥', name:'Healthcare', desc:'Lab report analysis, triage agents, bilingual patient AI. Live: Anbu Health AI at anbuclinic.me.' },
+  { icon:'🏥', name:'Healthcare', desc:'Lab report analysis, triage agents, bilingual patient AI, HIPAA/DPDP-aware design. Live: Anbu Health AI at anbuclinic.me.' },
   { icon:'🏦', name:'Finance',    desc:'Document intelligence, risk scoring pipelines, compliance-aware LLM workflows.' },
   { icon:'🏭', name:'Manufacturing', desc:'Predictive maintenance, visual inspection CV, IoT sensor analytics.' },
   { icon:'🎓', name:'Education', desc:'Adaptive tutoring agents, assessment generation, multilingual knowledge bases.' },
@@ -58,7 +58,7 @@ const INDUSTRIES = [
 const AI_CAPS = [
   { abbr:'LLMs',   name:'Large Language Models', desc:'Fine-tuning, RAG, QLoRA, PEFT — production-grade.' },
   { abbr:'Agents', name:'Agentic Systems',       desc:'Multi-agent orchestration, tool-calling, memory.' },
-  { abbr:'CV',     name:'Computer Vision',       desc:'BLIP-3, ViT, CLIP — image & scan analysis.' },
+  { abbr:'CV',     name:'Computer Vision',       desc:'CLIP, BLIP, ViT, OpenCV — image & scan analysis.' },
   { abbr:'NLP',    name:'Natural Language',      desc:'Classification, extraction, sentiment, spaCy.' },
   { abbr:'VLMs',   name:'Vision-Language',       desc:'Multimodal reasoning across text + image.' },
   { abbr:'MLOps',  name:'ML Operations',         desc:'SageMaker, Docker, GitHub Actions, monitoring.' },
@@ -66,11 +66,11 @@ const AI_CAPS = [
 
 const STACK = [
   'PyTorch','TensorFlow','LangChain','HuggingFace',
-  'Qdrant','FAISS','FastAPI','React',
+  'Google ADK','Gemini','Qdrant','FAISS','FastAPI','React',
   'Azure Container Apps','AWS SageMaker','GCP Vertex AI',
-  'Docker','GitHub Actions','Groq','GPT-4o Vision',
-  'QLoRA / PEFT','BLIP-3','Qwen','CodeLlama',
-  'Firebase','Supabase','PostgreSQL','MongoDB',
+  'Docker','Terraform','GitHub Actions','Prometheus / Grafana',
+  'Groq · LLaMA 3.3','GPT-4o Vision','QLoRA / PEFT','Qwen','CodeLlama',
+  'Firebase Auth','Supabase','PostgreSQL','MongoDB',
 ]
 
 const PROCESS = [
@@ -84,18 +84,19 @@ const PROCESS = [
 const WHY_US = [
   { icon:'🚀', title:'Shipped, not demoed',    desc:'Every claim is backed by a live production deployment — Anbu Health AI is live today at anbuclinic.me.' },
   { icon:'🧠', title:'Original R&D',           desc:'Antahkarana is our own reasoning framework — patent filed, IEEE paper, not borrowed methodology.' },
-  { icon:'🔒', title:'Compliance-first',        desc:'DPDP Act 2023, Firebase OTP, HIPAA-aware design — built into architecture, not bolted on.' },
+  { icon:'🔒', title:'Compliance-first',        desc:'DPDP Act 2023, consent & audit logging, PHI redaction, Firebase OTP, HIPAA-aware design — built into the architecture, not bolted on.' },
   { icon:'🌐', title:'Multilingual by default', desc:'Tamil + English bilingual AI proven in production. Other Indic languages on request.' },
   { icon:'📦', title:'Full-stack delivery',     desc:'One team: frontend, backend, AI pipeline, cloud infra, monitoring. No hand-off gaps.' },
-  { icon:'⚡', title:'Fast to production',      desc:'We\'ve gone from brief to live Azure deployment in weeks — not quarters.' },
+  { icon:'🛠', title:'Engineered like infrastructure', desc:'Our founder spent 8+ years running safety-critical electrical installations. That is why we design AI with guardrails, observability and failure modes in mind.' },
 ]
 
 const FAQS = [
-  { q:'How quickly can we start?',           a:'We are an immediate joiner. Discovery calls can happen within 48 hours and first deliverables within weeks.' },
+  { q:'How quickly can we start?',           a:'We can start immediately. Discovery calls can happen within 48 hours, and scoped first deliverables follow within weeks.' },
   { q:'Do you sign NDAs?',                   a:'Yes. We sign NDAs before any sensitive information is shared. IP stays with the client unless negotiated otherwise.' },
   { q:'What industries do you serve?',       a:'Healthcare, finance, manufacturing, education, retail, and research. See our Solutions by Industry section.' },
   { q:'Can you work with our existing data?',a:'Yes. We build pipelines around your existing databases, documents, and APIs — no requirement to migrate.' },
-  { q:'What is the Antahkarana framework?',  a:'Our proprietary 5-stage LLM reasoning architecture inspired by Vedantic cognitive theory. Patent filed Apr 2026, IEEE paper submitted.' },
+  { q:'What is the Antahkarana framework?',  a:'Our own five-module reasoning architecture for LLMs and VLMs, inspired by Vedantic cognitive theory. It routes by question type and only runs verification or self-consistency passes when needed. Indian patent filed Apr 2026; paper published on IEEE Xplore (ICSTSDG 2026).' },
+  { q:'How do you handle sensitive data?',   a:'Compliance is designed in: consent management, audit logging, PHI/PII redaction, rate limiting and right-to-erasure flows (DPDP Act 2023 for Anbu Health AI; HIPAA-oriented controls for healthcare QA work). We sign NDAs before any sensitive data is shared.' },
   { q:'Do you offer retainers?',            a:'Yes — ongoing model maintenance, RAG updates, monitoring, and feature additions are available as monthly retainers.' },
 ]
 
@@ -109,7 +110,7 @@ const TEAM = [
   {
     name:'Rajaganapathy M',
     role:'Founder · AI/ML Engineer',
-    bio:'M.Tech AI, SRM (9.6/10). 2+ years independent AI engineering. AWS Certified. Patent filed. IEEE paper. 3 live HuggingFace models.',
+    bio:'M.Tech AI, SRM (CGPA 9.6/10). 2+ years of independent AI engineering after 8+ years in safety-critical engineering. Indian patent filed. IEEE Xplore paper. 3 public HuggingFace models.',
     initials:'R',
     links:{ hf:'https://huggingface.co/RajGana', gh:'https://github.com/rajaganaa', li:'https://linkedin.com/in/raja-ganapathy-36b00658' },
   },
@@ -118,7 +119,7 @@ const TEAM = [
 const STATS = [
   { n:'1',      label:'Live production\nclient' },
   { n:'1',      label:'Patent filed\nApr 2026' },
-  { n:'5-stage',label:'Antahkarana\nreasoning' },
+  { n:'IEEE',   label:'Xplore paper\npublished 2026' },
   { n:'3',      label:'Live HuggingFace\nmodels' },
   { n:'2+',     label:'Years independent\nAI engineering' },
   { n:'9.6',    label:'CGPA — M.Tech AI\nSRM Institute' },
@@ -407,6 +408,7 @@ function Hero() {
           {[
             { n:'1', l:'Live production client' },
             { n:'1', l:'Patent filed' },
+            { n:'IEEE', l:'Xplore paper' },
             { n:'3', l:'HuggingFace models' },
           ].map(s => (
             <div key={s.l}>
@@ -460,7 +462,7 @@ function Mission() {
 function Stats() {
   return (
     <div style={{ background:'var(--ink)' }}>
-      <div style={{ maxWidth:'var(--max-w)', margin:'0 auto', display:'grid', gridTemplateColumns:'repeat(6,1fr)' }}>
+      <div className="stats-grid" style={{ maxWidth:'var(--max-w)', margin:'0 auto', display:'grid', gridTemplateColumns:'repeat(6,1fr)' }}>
         {STATS.map((s,i) => (
           <div key={i} style={{
             padding:'28px 16px', textAlign:'center',
@@ -471,9 +473,7 @@ function Stats() {
               fontSize:'clamp(1.3rem,2.5vw,2rem)', letterSpacing:'-.025em',
               color:'#fff', lineHeight:1, marginBottom:7,
             }}>
-              {s.n.includes('stage')
-                ? <><span style={{ color:'var(--clay-m)' }}>5</span>‑stage</>
-                : <span style={{ color:'var(--clay-m)' }}>{s.n}</span>}
+              <span style={{ color:'var(--clay-m)' }}>{s.n}</span>
             </div>
             <div style={{
               fontFamily:'var(--f-mono)', fontSize:9, letterSpacing:'.09em',
@@ -547,7 +547,7 @@ function Products() {
       <div className="max-w">
         <SectionBadge>Products</SectionBadge>
         <h2 className="h2">What we've <em>built and shipped</em>.</h2>
-        <p className="lead">Our products are live in production — not demo-ware.</p>
+        <p className="lead">Anbu Health AI is live in production; our multi-agent platform is in active build for a startup client.</p>
 
         <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
           {/* Anbu Health AI */}
@@ -556,11 +556,11 @@ function Products() {
             <div className="live-badge" style={{ marginBottom:18 }}><span className="live-dot"/>LIVE IN PRODUCTION</div>
             <h3 style={{ fontFamily:'var(--f-serif)',fontWeight:500,fontSize:'1.5rem',lineHeight:1.15,letterSpacing:'-.02em',color:'var(--ink)',marginBottom:12 }}>Anbu Health AI</h3>
             <p style={{ fontFamily:'var(--f-sans)',fontSize:13.5,fontWeight:300,color:'var(--ink2)',lineHeight:1.8,marginBottom:18 }}>
-              Bilingual (Tamil/English) medical AI assistant — lab reports, diagnostic scans, medicine photos.
-              Deployed to a paying client at anbuclinic.me with Firebase OTP auth and DPDP Act 2023 compliance.
+              Bilingual (Tamil/English) medical AI assistant with voice input — lab reports, scans, prescriptions and medicine strips.
+              Used by real patients at a village clinic; delivered end-to-end to a paying client at anbuclinic.me with Firebase OTP login and DPDP Act 2023 compliance.
             </p>
             <div style={{ display:'flex',flexWrap:'wrap',gap:6,marginBottom:20 }}>
-              {['React','FastAPI','Azure','Groq','GPT-4o Vision','Qdrant RAG'].map(t=><span key={t} className="tag">{t}</span>)}
+              {['React','FastAPI','Azure','Groq LLaMA 3.3','GPT-4o Vision','Qdrant RAG','Terraform'].map(t=><span key={t} className="tag">{t}</span>)}
             </div>
             <a href="https://anbuclinic.me" target="_blank" rel="noopener noreferrer"
               className="btn btn-clay" style={{ fontSize:12,padding:'9px 18px' }}>
@@ -576,15 +576,15 @@ function Products() {
               padding:'4px 11px',borderRadius:20,
               fontFamily:'var(--f-mono)',fontSize:10,letterSpacing:'.12em',color:'var(--clay-m)',
               marginBottom:18,
-            }}>PATENT FILED · IEEE SUBMITTED</div>
+            }}>PATENT FILED · PUBLISHED ON IEEE XPLORE</div>
             <h3 style={{ fontFamily:'var(--f-serif)',fontStyle:'italic',fontWeight:400,fontSize:'1.5rem',lineHeight:1.15,letterSpacing:'-.02em',color:'var(--d-text)',marginBottom:12 }}>
               Antahkarana<br/>Reasoning Framework
             </h3>
             <p style={{ fontFamily:'var(--f-sans)',fontSize:13.5,fontWeight:300,color:'var(--d-text2)',lineHeight:1.8,marginBottom:18 }}>
-              Cognitively-inspired 5-stage architecture for LLMs and VLMs. Validated on 2,500+ multimodal samples. Powers Anbu Health AI in production.
+              Cognitively-inspired five-module architecture for LLMs and VLMs that routes by question type and only triggers verification when needed. Validated on 2,500+ multimodal samples. Powers Anbu Health AI.
             </p>
             <div style={{ display:'flex',flexDirection:'column',gap:7 }}>
-              {[['Manas','Perception & sensory input'],['Chitta','Memory & retrieval (RAG)'],['Buddhi','Discrimination & reasoning'],['Ahamkara','Integration & synthesis'],['Sakshi','Confidence & hallucination check']].map(([n,r]) => (
+              {[['Manas','Six-way question-type router'],['Chitta','Dense retrieval + entity-overlap scoring'],['Buddhi','3-pass reasoning (verify · self-consistency)'],['Ahamkara','Structured output layer'],['Sakshi','Non-interfering logging monitor']].map(([n,r]) => (
                 <div key={n} style={{ display:'flex',gap:14,alignItems:'center',padding:'9px 14px',background:'rgba(255,255,255,.04)',border:'1px solid var(--d-border)',borderRadius:7 }}>
                   <span style={{ fontFamily:'var(--f-mono)',fontSize:11,color:'var(--clay-m)',minWidth:66,flexShrink:0 }}>{n}</span>
                   <span style={{ fontFamily:'var(--f-sans)',fontSize:12,fontWeight:300,color:'var(--d-text2)' }}>{r}</span>
@@ -594,12 +594,38 @@ function Products() {
             <div style={{ marginTop:18,fontFamily:'var(--f-mono)',fontSize:10,letterSpacing:'.08em',color:'var(--d-text3)' }}>APP NO. 202641043947 · APR 2026</div>
           </div>
 
+          {/* Multi-agent system */}
+          <div className="card" style={{ padding:28 }}>
+            <div className="live-badge" style={{ marginBottom:16 }}><span className="live-dot"/>ACTIVE BUILD · STARTUP CLIENT</div>
+            <h3 style={{ fontFamily:'var(--f-serif)',fontWeight:500,fontSize:'1.3rem',lineHeight:1.2,letterSpacing:'-.02em',color:'var(--ink)',marginBottom:10 }}>Spec-Driven Multi-Agent Coding System</h3>
+            <p style={{ fontFamily:'var(--f-sans)',fontSize:13,fontWeight:300,color:'var(--ink2)',lineHeight:1.75,marginBottom:16 }}>
+              A three-level agent hierarchy (Orchestrator → Feature Leads → Explorer, Coder, Tester, Reviewer) that turns a plain-English goal into tested, reviewed, committed code. Versioned markdown specs, path-sandboxed tools, git checkpoint per task, golden-task and LLM-as-Judge evaluation. Delivered a HIPAA-oriented healthcare QA system with JWT auth and audit logging.
+            </p>
+            <div style={{ display:'flex',flexWrap:'wrap',gap:6 }}>
+              {['Google ADK','Gemini 2.5 Flash','Multi-agent','LLM-as-Judge','Git automation'].map(t=><span key={t} className="tag">{t}</span>)}
+            </div>
+          </div>
+
+          {/* Security labs */}
+          <div className="card" style={{ padding:28 }}>
+            <div style={{ fontFamily:'var(--f-mono)',fontSize:10,letterSpacing:'.16em',color:'var(--clay)',marginBottom:16 }}>OPEN SOURCE · GITHUB</div>
+            <h3 style={{ fontFamily:'var(--f-serif)',fontWeight:500,fontSize:'1.3rem',lineHeight:1.2,letterSpacing:'-.02em',color:'var(--ink)',marginBottom:10 }}>AI-Augmented Security Labs</h3>
+            <p style={{ fontFamily:'var(--f-sans)',fontSize:13,fontWeight:300,color:'var(--ink2)',lineHeight:1.75,marginBottom:16 }}>
+              Five hands-on labs behind our security-aware approach to AI: DevSecOps on Azure, digital forensics &amp; incident response, a mini SOC with Wazuh, web/API security assessment, and AI/LLM security.
+            </p>
+            <div style={{ display:'flex',flexWrap:'wrap',gap:6,marginBottom:18 }}>
+              {['Azure + Terraform','Wazuh SIEM/XDR','Docker Compose','GitHub Actions','Ollama'].map(t=><span key={t} className="tag">{t}</span>)}
+            </div>
+            <a href="https://github.com/rajaganaa/ai_cyber_security" target="_blank" rel="noopener noreferrer"
+              className="btn btn-ghost" style={{ fontSize:12,padding:'8px 16px' }}>View the labs →</a>
+          </div>
+
           {/* HuggingFace Models card */}
           <div className="card" style={{ padding:28, gridColumn:'span 2' }}>
             <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20 }}>
               <div>
                 <div style={{ fontFamily:'var(--f-mono)',fontSize:10,letterSpacing:'.16em',color:'var(--clay)',marginBottom:6 }}>HUGGINGFACE — LIVE MODELS</div>
-                <h3 style={{ fontFamily:'var(--f-sans)',fontWeight:600,fontSize:15,color:'var(--ink)' }}>3 Fine-tuned Models in Production</h3>
+                <h3 style={{ fontFamily:'var(--f-sans)',fontWeight:600,fontSize:15,color:'var(--ink)' }}>3 Public Models on Hugging Face</h3>
               </div>
               <a href="https://huggingface.co/RajGana" target="_blank" rel="noopener noreferrer"
                 className="btn btn-ghost" style={{ fontSize:12,padding:'8px 16px',flexShrink:0 }}>
@@ -608,9 +634,9 @@ function Products() {
             </div>
             <div style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10 }}>
               {[
-                { name:'TinyLLaMA Fine-tune',  stack:'QLoRA · PEFT',      desc:'Domain-adapted small LLM for edge deployment' },
-                { name:'MiniVLM',              stack:'BLIP-3 · ViT',      desc:'Vision-language model for image+text tasks' },
-                { name:'CodeLlama-7B QLoRA',   stack:'CodeAlpaca-20K',    desc:'60% GPU reduction, deployed on HF Spaces via Groq' },
+                { name:'TinyLLaMA (from scratch)', stack:'PyTorch · LoRA',     desc:'Transformer trained from scratch, loss 8.9 → 0.33; LoRA fine-tune 1.6 → 1.01' },
+                { name:'Mini-VLM (from scratch)',  stack:'PyTorch · Vision-language', desc:'Vision-language model trained from scratch, loss 17 → 1.17, ~$10 compute' },
+                { name:'CodeLlama-7B QLoRA',       stack:'CodeAlpaca-20K · SageMaker', desc:'~60% GPU memory reduction; live demo on HF Spaces via Groq' },
               ].map(m => (
                 <div key={m.name} style={{ background:'var(--bg2)',borderRadius:10,padding:'16px 18px',border:'1px solid var(--border)' }}>
                   <div style={{ fontFamily:'var(--f-sans)',fontWeight:600,fontSize:13,color:'var(--ink)',marginBottom:4 }}>{m.name}</div>
@@ -659,7 +685,7 @@ function Work() {
       <div className="max-w">
         <SectionBadge>Case Studies</SectionBadge>
         <h2 className="h2">Shipped, not <em>demoed</em>.</h2>
-        <p className="lead">One live product in production. One patent-filed framework behind it.</p>
+        <p className="lead">One live product in production, one multi-agent platform in active build, and the patent-filed framework behind them.</p>
 
         {/* Case study: Anbu Health */}
         <div className="card" style={{ padding:36, marginBottom:12, display:'grid', gridTemplateColumns:'1.15fr 1fr', gap:40, alignItems:'start' }}>
@@ -669,19 +695,19 @@ function Work() {
               Anbu Health AI
             </h3>
             <p style={{ fontFamily:'var(--f-sans)',fontSize:13.5,fontWeight:300,color:'var(--ink2)',lineHeight:1.8,marginBottom:16 }}>
-              <strong style={{ fontWeight:500,color:'var(--ink)' }}>The problem:</strong> A Chennai clinic needed an AI layer that could help Tamil-speaking patients
-              understand their own lab reports — without requiring English literacy or a doctor's appointment for every query.
+              <strong style={{ fontWeight:500,color:'var(--ink)' }}>The problem:</strong> A village clinic in Ariyalur District, Tamil Nadu needed an AI layer that could help Tamil-speaking patients
+              understand their own lab reports and prescriptions — without requiring English literacy or a trip for every query.
             </p>
             <p style={{ fontFamily:'var(--f-sans)',fontSize:13.5,fontWeight:300,color:'var(--ink2)',lineHeight:1.8,marginBottom:16 }}>
-              <strong style={{ fontWeight:500,color:'var(--ink)' }}>What we built:</strong> A bilingual (Tamil/English) AI assistant that processes lab report images,
-              diagnostic scan photos, and medicine labels — returning patient-friendly explanations with a 5-stage hallucination
-              check pipeline ensuring clinical safety.
+              <strong style={{ fontWeight:500,color:'var(--ink)' }}>What we built:</strong> A bilingual (Tamil/English) assistant with voice input and Tamil text-to-speech that analyses lab reports,
+              scans, prescriptions and medicine strips — returning patient-friendly explanations through a 5-stage pipeline
+              with confidence scoring and hallucination checks, plus Schedule H1 drug-safety blocking.
             </p>
             <p style={{ fontFamily:'var(--f-sans)',fontSize:13.5,fontWeight:300,color:'var(--ink2)',lineHeight:1.8,marginBottom:20 }}>
-              <strong style={{ fontWeight:500,color:'var(--ink)' }}>Delivered:</strong> React frontend + FastAPI backend + Azure Container Apps deployment + DPDP Act 2023 compliance + Firebase OTP auth — end to end.
+              <strong style={{ fontWeight:500,color:'var(--ink)' }}>Delivered:</strong> React frontend, FastAPI backend, Azure Container Apps with Terraform and CI/CD, Prometheus/Grafana monitoring, Firebase phone-OTP login, and DPDP Act 2023 compliance (consent management, PHI redaction, right to erasure) — end to end, with ongoing monthly maintenance.
             </p>
             <div style={{ display:'flex',flexWrap:'wrap',gap:6,marginBottom:24 }}>
-              {['React','FastAPI','Azure Container Apps','Groq','GPT-4o Vision','Qdrant RAG','Firebase OTP'].map(t=><span key={t} className="tag">{t}</span>)}
+              {['React','FastAPI','Azure Container Apps','Groq LLaMA 3.3 + Gemini fallback','GPT-4o Vision','Qdrant RAG','Supabase','Terraform','Firebase OTP'].map(t=><span key={t} className="tag">{t}</span>)}
             </div>
             <a href="https://anbuclinic.me" target="_blank" rel="noopener noreferrer" className="btn btn-clay">Visit anbuclinic.me →</a>
           </div>
@@ -715,7 +741,7 @@ function Research() {
       <div className="max-w">
         <div className="eyebrow-dark">Research & Innovation</div>
         <h2 className="h2-dark">Original R&D,<br/><em>not borrowed methodology</em>.</h2>
-        <p className="lead-dark">Our reasoning framework is our own — filed, peer-reviewed, and running in production.</p>
+        <p className="lead-dark">Our reasoning framework is our own — patent filed, published on IEEE Xplore, and running in production.</p>
 
         <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:24 }}>
           {/* Patent */}
@@ -723,20 +749,48 @@ function Research() {
             <div style={{ fontFamily:'var(--f-mono)',fontSize:10,letterSpacing:'.16em',color:'var(--clay-m)',marginBottom:12 }}>PATENT FILED — APR 2026</div>
             <h3 style={{ fontFamily:'var(--f-serif)',fontStyle:'italic',fontWeight:400,fontSize:'1.3rem',color:'var(--d-text)',marginBottom:10 }}>Antahkarana Reasoning Framework</h3>
             <p style={{ fontFamily:'var(--f-sans)',fontSize:13,fontWeight:300,color:'var(--d-text2)',lineHeight:1.75,marginBottom:14 }}>
-              A cognitively-inspired 5-stage LLM/VLM reasoning architecture validated on 2,500+ multimodal samples.
-              Filed with the Indian Patent Office.
+              “A Computer-Implemented Multi-Stage Adaptive Reasoning System Using Modular Cognitive Processing Layer.”
+              Filed with the Indian Patent Office on 3 April 2026; under examination (not yet granted).
             </p>
             <div style={{ fontFamily:'var(--f-mono)',fontSize:10,color:'var(--d-text3)',letterSpacing:'.07em' }}>APP NO. 202641043947</div>
           </div>
 
           {/* IEEE */}
           <div className="card-dark" style={{ padding:28 }}>
-            <div style={{ fontFamily:'var(--f-mono)',fontSize:10,letterSpacing:'.16em',color:'var(--clay-m)',marginBottom:12 }}>IEEE PAPER — GOOGLE SCHOLAR INDEXED</div>
-            <h3 style={{ fontFamily:'var(--f-serif)',fontStyle:'italic',fontWeight:400,fontSize:'1.3rem',color:'var(--d-text)',marginBottom:10 }}>Multimodal Reasoning in Clinical AI</h3>
+            <div style={{ fontFamily:'var(--f-mono)',fontSize:10,letterSpacing:'.16em',color:'var(--clay-m)',marginBottom:12 }}>IEEE XPLORE — PUBLISHED OCT 2026</div>
+            <h3 style={{ fontFamily:'var(--f-serif)',fontStyle:'italic',fontWeight:400,fontSize:'1.3rem',color:'var(--d-text)',marginBottom:10 }}>Antahkarana: Cognitively-Inspired Adaptive Reasoning for LLMs and VLMs</h3>
             <p style={{ fontFamily:'var(--f-sans)',fontSize:13,fontWeight:300,color:'var(--d-text2)',lineHeight:1.75,marginBottom:14 }}>
-              IEEE paper submitted on the Antahkarana framework's application to healthcare AI. Indexed on Google Scholar.
+              2026 2nd International Conference on Smart Technologies for Sustainable Development Goals (ICSTSDG), Chennai, 19–21 Aug 2026. Authors: M RajaGanapathy, H Karthikeyan.
             </p>
-            <div style={{ fontFamily:'var(--f-mono)',fontSize:10,color:'var(--d-text3)',letterSpacing:'.07em' }}>SUBMITTED · GOOGLE SCHOLAR INDEXED</div>
+            <a href="https://ieeexplore.ieee.org/document/11708384" target="_blank" rel="noopener noreferrer"
+              style={{ fontFamily:'var(--f-mono)',fontSize:10,color:'var(--clay-m)',letterSpacing:'.07em',textDecoration:'none' }}>DOI 10.1109/ICSTSDG69220.2026.11708384 →</a>
+          </div>
+        </div>
+
+        {/* Results */}
+        <div className="card-dark" style={{ padding:28, marginBottom:24 }}>
+          <div style={{ fontFamily:'var(--f-mono)',fontSize:10,letterSpacing:'.16em',color:'var(--clay-m)',marginBottom:16 }}>PUBLISHED RESULTS — QWEN2.5-7B / BLIP-2 FLAN-T5-XL</div>
+          <div style={{ display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12 }}>
+            {[
+              { n:'+59.61%', l:'TruthfulQA accuracy vs direct prompting' },
+              { n:'+40.06%', l:'SVAMP exact match' },
+              { n:'+250.82%', l:'FEVER F1 vs chain-of-thought' },
+              { n:'26% fewer', l:'model calls than uniform Self-Consistency (VQA)' },
+              { n:'26.6 → 20.9%', l:'VQA hallucination rate' },
+            ].map(r => (
+              <div key={r.l} style={{ padding:'14px 16px',background:'rgba(255,255,255,.04)',border:'1px solid var(--d-border)',borderRadius:8 }}>
+                <div style={{ fontFamily:'var(--f-serif)',fontSize:'1.25rem',color:'var(--d-text)',marginBottom:5 }}>{r.n}</div>
+                <div style={{ fontFamily:'var(--f-mono)',fontSize:10,color:'var(--d-text3)',lineHeight:1.6 }}>{r.l}</div>
+              </div>
+            ))}
+          </div>
+          <p style={{ fontFamily:'var(--f-sans)',fontSize:12,fontWeight:300,color:'var(--d-text3)',lineHeight:1.7,marginTop:14 }}>
+            On HotpotQA and MMLU the framework performs comparably to, or below, Self-Consistency — a documented precision-versus-overcall trade-off in the paper.
+          </p>
+          <div style={{ display:'flex',gap:10,flexWrap:'wrap',marginTop:14 }}>
+            <a href="https://github.com/rajaganaa/antahkarana-reasoning-framework" target="_blank" rel="noopener noreferrer" className="btn btn-ghost-dark" style={{ fontSize:12,padding:'8px 16px' }}>Code on GitHub →</a>
+            <a href="https://rajaganaa.github.io/antahkarana-frontend/" target="_blank" rel="noopener noreferrer" className="btn btn-ghost-dark" style={{ fontSize:12,padding:'8px 16px' }}>Live demo →</a>
+            <a href="https://scholar.google.com/citations?user=93hagOEAAAAJ" target="_blank" rel="noopener noreferrer" className="btn btn-ghost-dark" style={{ fontSize:12,padding:'8px 16px' }}>Google Scholar →</a>
           </div>
         </div>
 
@@ -745,9 +799,9 @@ function Research() {
           <div style={{ fontFamily:'var(--f-mono)',fontSize:10,letterSpacing:'.16em',color:'var(--clay-m)',marginBottom:16 }}>HUGGINGFACE — OPEN MODELS</div>
           <div style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12 }}>
             {[
-              { name:'TinyLLaMA Fine-tune', detail:'QLoRA · PEFT · domain adaptation' },
-              { name:'MiniVLM',            detail:'BLIP-3 · ViT · vision-language' },
-              { name:'CodeLlama-7B QLoRA', detail:'CodeAlpaca-20K · 60% GPU reduction · Groq inference' },
+              { name:'TinyLLaMA (from scratch)', detail:'PyTorch · loss 8.9 → 0.33 · LoRA fine-tune' },
+              { name:'Mini-VLM (from scratch)',  detail:'PyTorch · loss 17 → 1.17 · ~$10 compute' },
+              { name:'CodeLlama-7B QLoRA',       detail:'CodeAlpaca-20K · ~60% GPU memory reduction · SageMaker' },
             ].map(m => (
               <div key={m.name} style={{ padding:'14px 16px',background:'rgba(255,255,255,.04)',border:'1px solid var(--d-border)',borderRadius:8 }}>
                 <div style={{ fontFamily:'var(--f-sans)',fontWeight:600,fontSize:13,color:'var(--d-text)',marginBottom:5 }}>{m.name}</div>
@@ -794,23 +848,22 @@ function TechStack() {
               <span style={{ fontFamily:'var(--f-mono)',fontSize:10,color:'var(--d-text3)',marginLeft:8 }}>antahkarana/pipeline.py</span>
             </div>
             <pre style={{ fontFamily:'var(--f-mono)',fontSize:11.5,lineHeight:1.85,color:'var(--d-text2)',padding:'20px 22px',margin:0,overflowX:'auto' }}>
-{`\x1b`}
-              <span style={{ color:'rgba(231,229,224,.25)' }}># Antahkarana 5-stage pipeline{'\n'}</span>
+              <span style={{ color:'rgba(231,229,224,.25)' }}># Antahkarana — five modules (illustrative){'\n'}</span>
               <span style={{ color:'#C392E0' }}>from</span>{' antahkarana '}
               <span style={{ color:'#C392E0' }}>import</span>{' Pipeline\n\n'}
               {'pipe = Pipeline(\n'}
               {'  '}<span style={{ color:'#7EC8A0' }}>manas</span>
-              <span style={{ color:'rgba(231,229,224,.35)' }}>    = PerceptionStage(),{'\n'}</span>
+              <span style={{ color:'rgba(231,229,224,.35)' }}>    = QuestionRouter(types=6),{'\n'}</span>
               {'  '}<span style={{ color:'#7EC8A0' }}>chitta</span>
-              <span style={{ color:'rgba(231,229,224,.35)' }}>   = RAGStage(qdrant),{'\n'}</span>
+              <span style={{ color:'rgba(231,229,224,.35)' }}>   = DenseRetrieval(entity_overlap=True),{'\n'}</span>
               {'  '}<span style={{ color:'#7EC8A0' }}>buddhi</span>
-              <span style={{ color:'rgba(231,229,224,.35)' }}>   = ReasoningStage(),{'\n'}</span>
+              <span style={{ color:'rgba(231,229,224,.35)' }}>   = ThreePassReasoner(verify=True, self_consistency=True),{'\n'}</span>
               {'  '}<span style={{ color:'#7EC8A0' }}>ahamkara</span>
-              <span style={{ color:'rgba(231,229,224,.35)' }}> = SynthesisStage(),{'\n'}</span>
+              <span style={{ color:'rgba(231,229,224,.35)' }}> = StructuredOutput(),{'\n'}</span>
               {'  '}<span style={{ color:'#7EC8A0' }}>sakshi</span>
-              <span style={{ color:'rgba(231,229,224,.35)' }}>   = HallucinationCheck(),{'\n'}</span>
+              <span style={{ color:'rgba(231,229,224,.35)' }}>   = LoggingMonitor(),{'\n'}</span>
               {')\n\n'}
-              <span style={{ color:'rgba(231,229,224,.25)' }}># Azure Container Apps · anbuclinic.me{'\n'}</span>
+              <span style={{ color:'rgba(231,229,224,.25)' }}># Powers Anbu Health AI · Azure Container Apps{'\n'}</span>
               <span style={{ color:'rgba(231,229,224,.25)' }}># DPDP Act 2023 compliant</span>
             </pre>
           </div>
@@ -916,8 +969,10 @@ function About() {
             </p>
             <p style={{ fontFamily:'var(--f-sans)',fontSize:14.5,fontWeight:300,color:'var(--ink2)',lineHeight:1.85,marginBottom:20 }}>
               Founded in Chennai and registered as an MSME, we're available for select
-              engagements globally. Our reasoning framework, Antahkarana, represents genuine
-              original R&D — not adapted open-source methodology.
+              engagements globally. Our founder spent 8+ years running safety-critical electrical
+              installations before moving into AI — which is why we build with guardrails and
+              observability first. Our reasoning framework, Antahkarana, is original R&D: patent
+              filed and published on IEEE Xplore.
             </p>
             <p style={{ fontFamily:'var(--f-sans)',fontSize:14.5,fontWeight:300,color:'var(--ink2)',lineHeight:1.85 }}>
               We believe "AI for Every Home, Intelligence for Every Hand" is not a tagline —
@@ -974,7 +1029,7 @@ function About() {
             {/* Credentials */}
             <div className="card" style={{ padding:'16px 20px' }}>
               <div style={{ fontFamily:'var(--f-mono)',fontSize:10,letterSpacing:'.14em',color:'var(--ink3)',marginBottom:12 }}>CREDENTIALS</div>
-              {['AWS Solutions Architect Associate','M.Tech AI — SRM Institute (9.6/10)','IITM Pravartak AI/ML Program (IIT Madras)','Kaggle AI Agents Intensive (Google)','NPTEL Top 5% IoT (86% · 50,282 candidates)','Hackathon 6th place / 195 — SRM Dec 2024'].map((c,i) => (
+              {['M.Tech AI — SRM Institute (CGPA 9.6/10)','IEEE Xplore paper · Indian patent filed','IITM Pravartak AI/ML Program (IIT Madras · NASSCOM)','AWS Solutions Architect Associate (Udemy course certificate)','Kaggle AI Agents Intensive (Google)','Cyber Security specialization — 4 courses, 54.5 hrs','NPTEL Top 5% IoT (86% · 50,282 candidates)','Hackathon 6th place / 195 — SRM Dec 2024'].map((c,i) => (
                 <div key={i} style={{ display:'flex',alignItems:'flex-start',gap:8,fontFamily:'var(--f-sans)',fontSize:12,color:'var(--ink2)',fontWeight:300,marginBottom:6,lineHeight:1.4 }}>
                   <span style={{ color:'var(--clay)',fontSize:11,flexShrink:0,marginTop:1 }}>›</span>{c}
                 </div>
@@ -1034,12 +1089,12 @@ function FAQs() {
 ═══════════════════════════════════════════════════════════════════════════ */
 function Blog() {
   const posts = [
-    { tag:'LLM Engineering', title:'Why RAG alone isn\'t enough — and what the Antahkarana framework adds', date:'Jun 2025' },
-    { tag:'Production AI',   title:'Deploying bilingual medical AI on Azure: what we learned shipping Anbu Health AI', date:'May 2025' },
-    { tag:'Fine-tuning',     title:'QLoRA in practice: achieving 60% GPU reduction on CodeLlama-7B without sacrificing quality', date:'Apr 2025' },
+    { tag:'LLM Engineering', title:'Why RAG alone isn\'t enough — and what the Antahkarana framework adds', date:'Planned' },
+    { tag:'Production AI',   title:'Deploying bilingual medical AI on Azure: what we learned shipping Anbu Health AI', date:'Planned' },
+    { tag:'Fine-tuning',     title:'QLoRA in practice: achieving 60% GPU reduction on CodeLlama-7B without sacrificing quality', date:'Planned' },
   ]
   return (
-    <section style={{ padding:'80px clamp(20px,5vw,60px)', background:'var(--bg)' }}>
+    <section id="blog" style={{ padding:'80px clamp(20px,5vw,60px)', background:'var(--bg)' }}>
       <div className="max-w">
         <SectionBadge>Blog & Insights</SectionBadge>
         <h2 className="h2">What we're <em>learning and sharing</em>.</h2>
@@ -1066,7 +1121,7 @@ function Blog() {
 ═══════════════════════════════════════════════════════════════════════════ */
 function Careers() {
   return (
-    <section style={{ padding:'80px clamp(20px,5vw,60px)', background:'var(--bg2)' }}>
+    <section id="careers" style={{ padding:'80px clamp(20px,5vw,60px)', background:'var(--bg2)' }}>
       <div className="max-w" style={{ maxWidth:680,textAlign:'center' }}>
         <SectionBadge>Careers</SectionBadge>
         <h2 className="h2" style={{ marginBottom:16 }}>Build AI that matters.<br/><em>Join the team</em>.</h2>
@@ -1278,7 +1333,7 @@ function Footer() {
   const cols = [
     { title:'Services', links:[['LLM & Generative AI','#services'],['Agentic AI','#services'],['AI/ML Development','#services'],['Agent-as-a-Service','#services'],['AI Deployment','#services']] },
     { title:'Company',  links:[['About','#about'],['Research','#research'],['Blog','#blog'],['Careers','#careers'],['Contact','#contact']] },
-    { title:'Work',     links:[['Anbu Health AI','https://anbuclinic.me'],['Antahkarana','#research'],['HuggingFace Models','https://huggingface.co/RajGana'],['GitHub','https://github.com/rajaganaa']] },
+    { title:'Work',     links:[['Anbu Health AI','https://anbuclinic.me'],['Antahkarana','#research'],['IEEE Xplore Paper','https://ieeexplore.ieee.org/document/11708384'],['Security Labs','https://github.com/rajaganaa/ai_cyber_security'],['HuggingFace Models','https://huggingface.co/RajGana'],['GitHub','https://github.com/rajaganaa']] },
     { title:'Legal',    links:[['Privacy Policy','#privacy'],['Terms of Service','#terms'],['Cookie Policy','#cookies']] },
   ]
   return (
