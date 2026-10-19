@@ -1210,7 +1210,7 @@ function Contact() {
         method: 'POST',
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          access_key: 'YOUR_WEB3FORMS_KEY',  // Get free key at web3forms.com
+          access_key: 'cd3f927f-43f9-425e-a332-d7cfc0fc5a06',  // Get free key at web3forms.com
           name:     form.name,
           company:  form.company,
           email:    form.email,
