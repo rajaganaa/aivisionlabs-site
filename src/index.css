@@ -167,3 +167,11 @@ body.dark .tag { background:var(--bg3); color:var(--ink2); }
 @media(min-width:769px) {
   .nav-mobile-menu-btn { display:none !important; }
 }
+
+/* ── Mobile / tablet: collapse inline multi-column grids ───────────────── */
+@media(max-width:900px) {
+  [style*="grid-template-columns"] { grid-template-columns:1fr !important; gap:16px !important; }
+  [style*="grid-column"], [style*="grid-area"] { grid-area:auto !important; }
+  [style*="grid-row"] { grid-row:auto !important; }
+  .stats-grid { grid-template-columns:repeat(2,1fr) !important; gap:0 !important; }
+}
